@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FacebookOutlined, GoogleOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Typography } from 'antd';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { Form, Input, Typography } from 'antd';
 
 import SubmitButton from '../../components/ui/SubmitButton';
 import AuthContext from '../../contexts/auth/auth-context';
@@ -14,57 +14,11 @@ export default function SignIn() {
   const { setUser } = useContext(AuthContext);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  /*
-  useEffect(() => {
-    // Initialize Google API
-    window.gapi.load('auth2', () => {
-      window.gapi.auth2.init({
-        client_id: 'YOUR_GOOGLE_CLIENT_ID',
-      });
-    });
-  }, []);*/
 
   const navigate = useNavigate();
 
   const onFinish = (values) => {
     console.log('Received values of form: ', values);
-  };
-
-  const handleGoogleSignIn = () => {
-    const auth2 = window.gapi.auth2.getAuthInstance();
-
-    auth2.signIn().then(async (googleUser) => {
-      const id_token = googleUser.getAuthResponse().id_token;
-      // Send the id_token to your server for verification and authentication
-      console.log('Google Sign-In ID Token:', id_token);
-
-      // Here, you can trigger the necessary actions to authenticate the user on your server
-      // For example, send the id_token to your backend and handle user creation or authentication
-      // ...
-
-      // After successful authentication, you can redirect the user or update your UI
-    });
-  };
-
-  const handleFacebookSignIn = async () => {
-    window.FB.login(
-      function (response) {
-        if (response.authResponse) {
-          const accessToken = response.authResponse.accessToken;
-          // Send the accessToken to your server for verification and authentication
-          console.log('Facebook Sign-In Access Token:', accessToken);
-
-          // Here, you can trigger the necessary actions to authenticate the user on your server
-          // For example, send the accessToken to your backend and handle user creation or authentication
-          // ...
-
-          // After successful authentication, you can redirect the user or update your UI
-        } else {
-          console.log('Facebook Sign-In failed.');
-        }
-      },
-      { scope: 'public_profile,email' }
-    );
   };
 
   const handleSignIn = async () => {
@@ -154,12 +108,6 @@ export default function SignIn() {
           />
         </Form.Item>
 
-        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <Link to="/accept-send-email" className="login-form-forgot">
-            Forgot password
-          </Link>
-        </Form.Item>
-
         {error && (
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
             <Typography.Text type="danger" style={{ fontSize: '20px', fontFamily: 'Arial, Helvetica, sans-serif' }}>
@@ -184,24 +132,8 @@ export default function SignIn() {
             register now!
           </Link>
         </Form.Item>
-
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          {/* Add the Google Sign-In button */}
-          <Button
-            icon={<GoogleOutlined />}
-            onClick={handleGoogleSignIn}
-            style={{ background: '#dd4b39', color: 'white' }}
-          >
-            Sign in with Google
-          </Button>
-
-          <Button
-            icon={<FacebookOutlined />}
-            onClick={handleFacebookSignIn}
-            style={{ background: '#3b5998', color: 'white' }}
-          >
-            Sign in with Facebook
-          </Button>
+          <a href="http://localhost:3000/auth/login/facebook">Đăng nhập bằng facebook 12</a>
         </Form.Item>
       </Form>
     </div>

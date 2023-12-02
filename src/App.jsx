@@ -8,6 +8,7 @@ import AuthContext from './contexts/auth/auth-context';
 import AcceptToSentEmailResetPassword from './pages/accept-send-email';
 import Home from './pages/home';
 import Landing from './pages/landing';
+import LoginSuccess from './pages/notification/login-success';
 import ResetPassword from './pages/reset-password';
 import SignIn from './pages/sign-in';
 import SignUp from './pages/sign-up';
@@ -109,6 +110,8 @@ function App() {
               </AuthRoute>
             }
           />
+
+          <Route path="/login-success/:token" element={<LoginSuccess />} />
         </Route>
         <Route path="/verify" element={<SuccessPage />} />
       </Routes>

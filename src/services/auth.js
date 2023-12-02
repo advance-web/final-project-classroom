@@ -5,6 +5,7 @@ const SIGN_UP_ENDPOINT = '/users/signup';
 const GET_ME_ENDPOINT = '/users/me';
 const LOG_OUT_ENDPOINT = '/users/logout';
 const UDPATE_PROFILE_ENDPOINT = '/users/me';
+const FACEBOOK_LOGIN_ENDPOINT = '/auth/login/facebook';
 const ACCEPT_SEND_EMAIL_ENDPOINT = '/users/accept-send-email';
 
 export const signIn = (data) => {
@@ -25,6 +26,10 @@ export const updateProfile = (data) => {
 
 export const logOut = () => {
   return request.get(LOG_OUT_ENDPOINT);
+};
+
+export const facebookLogin = () => {
+  return request.get(FACEBOOK_LOGIN_ENDPOINT);
 };
 
 export const acceptSendEmail = (data) => {
