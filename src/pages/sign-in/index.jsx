@@ -135,6 +135,9 @@ export default function SignIn() {
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
           <a href="http://localhost:3000/auth/login/facebook">Đăng nhập bằng facebook 12</a>
         </Form.Item>
+        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+          <a href="http://localhost:3000/auth/login/google">Đăng nhập bằng Google</a>
+        </Form.Item>
       </Form>
     </div>
   );

@@ -47,7 +47,8 @@ function App() {
       try {
         console.log('getme');
         const response = await getMe();
-        const userData = response.data.data.data;
+        console.log('Response: ', response);
+        const userData = response.data.data;
         setUser(userData);
       } catch (err) {
         console.log('Not logged in');
