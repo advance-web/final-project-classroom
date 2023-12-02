@@ -154,6 +154,12 @@ export default function SignIn() {
           />
         </Form.Item>
 
+        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+          <Link to="/accept-send-email" className="login-form-forgot">
+            Forgot password
+          </Link>
+        </Form.Item>
+
         {error && (
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
             <Typography.Text type="danger" style={{ fontSize: '20px', fontFamily: 'Arial, Helvetica, sans-serif' }}>

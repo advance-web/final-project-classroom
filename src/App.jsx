@@ -5,8 +5,10 @@ import { createGlobalStyle } from 'styled-components';
 
 import Page_Layout from './components/shared/layout';
 import AuthContext from './contexts/auth/auth-context';
+import AcceptToSentEmailResetPassword from './pages/accept-send-email';
 import Home from './pages/home';
 import Landing from './pages/landing';
+import ResetPassword from './pages/reset-password';
 import SignIn from './pages/sign-in';
 import SignUp from './pages/sign-up';
 import UserProfile from './pages/user-profile';
@@ -87,6 +89,22 @@ function App() {
             element={
               <AuthRoute user={user}>
                 <SignUp />
+              </AuthRoute>
+            }
+          />
+          <Route
+            path="/reset-password"
+            element={
+              <AuthRoute user={user}>
+                <ResetPassword />
+              </AuthRoute>
+            }
+          />
+          <Route
+            path="/accept-send-email"
+            element={
+              <AuthRoute user={user}>
+                <AcceptToSentEmailResetPassword />
               </AuthRoute>
             }
           />
