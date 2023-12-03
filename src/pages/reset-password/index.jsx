@@ -1,29 +1,27 @@
-import { useState } from "react";
-import { LockOutlined } from "@ant-design/icons";
-import { Form, Input, Typography, Popover } from "antd";
+import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { LockOutlined } from '@ant-design/icons';
+import { Form, Input, Popover, Typography } from 'antd';
 
-import SubmitButton from "../../components/ui/SubmitButton";
+import SubmitButton from '../../components/ui/SubmitButton';
+import { resetPassword } from '../../services/auth';
 
-import "../../css/resetPasswordStyle.css";
-import { resetPassword } from "../../services/auth";
-import { useSearchParams } from "react-router-dom";
+import '../../css/resetPasswordStyle.css';
 
 export default function ResetPassword() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const verifyToken = searchParams.get("token");
+  const [loading] = useState(false);
+  const [error] = useState(null);
+  const [searchParams] = useSearchParams();
+  const verifyToken = searchParams.get('token');
 
   const [open, setOpen] = useState(false);
-  const hide = () => {
-    setOpen(false);
-  };
+
   const handleOpenChange = (newOpen) => {
     setOpen(newOpen);
   };
 
   const onFinish = (values) => {
-    console.log("Received values of form: ", values);
+    console.log('Received values of form: ', values);
   };
 
   const handleResetPassword = () => {
@@ -33,10 +31,10 @@ export default function ResetPassword() {
         password: data.password,
         confirmPassword: data.confirmPassword,
       };
-      console.log("DataCallAPI: ", dataCallAPI);
+      console.log('DataCallAPI: ', dataCallAPI);
       resetPassword(verifyToken, data);
     } catch {
-      console.log("Error");
+      console.log('Error');
     }
   };
 
@@ -61,7 +59,7 @@ export default function ResetPassword() {
           rules={[
             {
               required: true,
-              message: "Please input your Password!",
+              message: 'Please input your Password!',
             },
           ]}
         >
@@ -79,16 +77,14 @@ export default function ResetPassword() {
           rules={[
             {
               required: true,
-              message: "Please input your Confirm Password!",
+              message: 'Please input your Confirm Password!',
             },
             {
               validator: (_, value) => {
-                if (!value || form.getFieldValue("password") === value) {
+                if (!value || form.getFieldValue('password') === value) {
                   return Promise.resolve();
                 }
-                return Promise.reject(
-                  new Error("The two passwords do not match!")
-                );
+                return Promise.reject(new Error('The two passwords do not match!'));
               },
             },
           ]}
@@ -107,12 +103,7 @@ export default function ResetPassword() {
           </Form.Item>
         )}
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <Popover
-            title="Đổi password thành công"
-            trigger="click"
-            open={open}
-            onOpenChange={handleOpenChange}
-          >
+          <Popover title="Đổi password thành công" trigger="click" open={open} onOpenChange={handleOpenChange}>
             <SubmitButton
               form={form}
               type="primary"

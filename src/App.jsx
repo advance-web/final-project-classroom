@@ -1,19 +1,19 @@
-import React, { useEffect } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
-import PropTypes from "prop-types";
-import { createGlobalStyle } from "styled-components";
+import React, { useEffect } from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { createGlobalStyle } from 'styled-components';
 
-import Page_Layout from "./components/shared/layout";
-import AuthContext from "./contexts/auth/auth-context";
-import AcceptToSentEmailResetPassword from "./pages/accept-send-email";
-import Home from "./pages/home";
-import Landing from "./pages/landing";
-import ResetPassword from "./pages/reset-password";
-import SignIn from "./pages/sign-in";
-import SignUp from "./pages/sign-up";
-import UserProfile from "./pages/user-profile";
-import SuccessPage from "./pages/successPage";
-import { getMe } from "./services/auth";
+import Page_Layout from './components/shared/layout';
+import AuthContext from './contexts/auth/auth-context';
+import AcceptToSentEmailResetPassword from './pages/accept-send-email';
+import Home from './pages/home';
+import Landing from './pages/landing';
+import ResetPassword from './pages/reset-password';
+import SignIn from './pages/sign-in';
+import SignUp from './pages/sign-up';
+import SuccessPage from './pages/successPage';
+import UserProfile from './pages/user-profile';
+import { getMe } from './services/auth';
 
 const ProtectedRoute = ({ user, children }) => {
   if (!user) {
@@ -44,12 +44,12 @@ function App() {
   useEffect(() => {
     const initUserData = async () => {
       try {
-        console.log("getme");
+        console.log('getme');
         const response = await getMe();
         const userData = response.data.data.data;
         setUser(userData);
       } catch (err) {
-        console.log("Not logged in");
+        console.log('Not logged in');
       }
     };
     initUserData();
