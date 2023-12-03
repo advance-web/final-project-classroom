@@ -42,7 +42,7 @@ export default function UserProfile() {
       if (status == 'success') {
         setUser(dataUser);
       }
-      form.submit();
+      // form.submit();
     } catch (error) {
       setError('Cập nhật không thành công');
       //setLoading(false)
