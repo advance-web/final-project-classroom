@@ -5,10 +5,13 @@ import { createGlobalStyle } from 'styled-components';
 
 import Page_Layout from './components/shared/layout';
 import AuthContext from './contexts/auth/auth-context';
+import AcceptToSentEmailResetPassword from './pages/accept-send-email';
 import Home from './pages/home';
 import Landing from './pages/landing';
+import ResetPassword from './pages/reset-password';
 import SignIn from './pages/sign-in';
 import SignUp from './pages/sign-up';
+import SuccessPage from './pages/successPage';
 import UserProfile from './pages/user-profile';
 import { getMe } from './services/auth';
 
@@ -90,7 +93,24 @@ function App() {
               </AuthRoute>
             }
           />
+          <Route
+            path="/reset-password"
+            element={
+              <AuthRoute user={user}>
+                <ResetPassword />
+              </AuthRoute>
+            }
+          />
+          <Route
+            path="/accept-send-email"
+            element={
+              <AuthRoute user={user}>
+                <AcceptToSentEmailResetPassword />
+              </AuthRoute>
+            }
+          />
         </Route>
+        <Route path="/verify" element={<SuccessPage />} />
       </Routes>
     </>
   );
