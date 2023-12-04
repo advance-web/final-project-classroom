@@ -1,10 +1,11 @@
 import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Form, Input, Typography } from 'antd';
+import { Form, Input, Popover, Typography } from 'antd';
 
 import SubmitButton from '../../components/ui/SubmitButton';
 import AuthContext from '../../contexts/auth/auth-context';
+import { setJwt } from '../../libs/utils/localStorage';
 import { signUp } from '../../services/auth';
 
 import '../../css/signupStyle.css';
@@ -15,38 +16,39 @@ export default function SignUp() {
   const [loading, setLoading] = useState(false);
   const { setUser } = useContext(AuthContext);
 
+  const [open, setOpen] = useState(false);
+
+  const handleOpenChange = (newOpen) => {
+    setOpen(newOpen);
+  };
+
   const onFinish = (values) => {
     console.log('Received values of form: ', values);
   };
 
   const handleSignUp = async () => {
     try {
-      const data = form.getFieldValue();
+      const { fullname, email, password, confirmPassword, telephone, address } = form.getFieldValue();
       const dataCallAPI = {
-        name: data.fullname,
-        email: data.email,
-        password: data.password,
-        confirmPassword: data.confirmPassword,
-        phone: data.telephone,
-        address: data.address,
+        name: fullname,
+        email,
+        password,
+        confirmPassword,
+        phone: telephone,
+        address,
       };
-      console.log('AloAlo123: ', dataCallAPI);
       setError(null);
       setLoading(true);
       const dataReturn = await signUp(dataCallAPI);
-      setLoading(false);
-      console.log('API Response: ', dataReturn);
-
       const dataUser = dataReturn.data;
-      const status = dataUser.status;
-
-      console.log('Status: ', status);
+      const token = dataUser.token;
 
       if (dataUser.status == 'success') {
-        navigate('/sign-up');
+        setUser(dataUser.data.user);
+        setJwt(token);
+        navigate('/home');
       }
-      form.submit();
-      setUser(dataUser.data.user);
+      setLoading(false);
     } catch (error) {
       setError('Email đã tồn tại');
       setLoading(false);
@@ -170,16 +172,18 @@ export default function SignUp() {
           </Form.Item>
         )}
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <SubmitButton
-            form={form}
-            type="primary"
-            loading={loading}
-            htmlType="submit"
-            className="signup-form-button"
-            onClick={handleSignUp}
-          >
-            Đăng kí
-          </SubmitButton>
+          <Popover title="Mời bạn check email" trigger="click" open={open} onOpenChange={handleOpenChange}>
+            <SubmitButton
+              form={form}
+              type="primary"
+              loading={loading}
+              htmlType="submit"
+              className="signup-form-button"
+              onClick={handleSignUp}
+            >
+              Đăng kí
+            </SubmitButton>
+          </Popover>
           Or{' '}
           <Link to="/sign-in" style={{ fontSize: '16px' }}>
             log in now!

@@ -5,10 +5,14 @@ import { createGlobalStyle } from 'styled-components';
 
 import Page_Layout from './components/shared/layout';
 import AuthContext from './contexts/auth/auth-context';
+import AcceptToSentEmailResetPassword from './pages/accept-send-email';
 import Home from './pages/home';
 import Landing from './pages/landing';
+import LoginSuccess from './pages/notification/login-success';
+import ResetPassword from './pages/reset-password';
 import SignIn from './pages/sign-in';
 import SignUp from './pages/sign-up';
+import SuccessPage from './pages/successPage';
 import UserProfile from './pages/user-profile';
 import { getMe } from './services/auth';
 
@@ -41,9 +45,8 @@ function App() {
   useEffect(() => {
     const initUserData = async () => {
       try {
-        console.log('getme');
         const response = await getMe();
-        const userData = response.data.data.data;
+        const userData = response.data.data;
         setUser(userData);
       } catch (err) {
         console.log('Not logged in');
@@ -90,7 +93,26 @@ function App() {
               </AuthRoute>
             }
           />
+          <Route
+            path="/reset-password"
+            element={
+              <AuthRoute user={user}>
+                <ResetPassword />
+              </AuthRoute>
+            }
+          />
+          <Route
+            path="/accept-send-email"
+            element={
+              <AuthRoute user={user}>
+                <AcceptToSentEmailResetPassword />
+              </AuthRoute>
+            }
+          />
+
+          <Route path="/login-success/:token" element={<LoginSuccess />} />
         </Route>
+        <Route path="/verify" element={<SuccessPage />} />
       </Routes>
     </>
   );

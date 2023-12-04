@@ -1,6 +1,6 @@
-import React from 'react';
-import { Button, Form } from 'antd';
-import PropTypes from 'prop-types';
+import React from "react";
+import { Button, Form } from "antd";
+import PropTypes from "prop-types";
 
 const SubmitButton = ({ form, ...other }) => {
   const [submittable, setSubmittable] = React.useState(false);
