@@ -1,27 +1,20 @@
-import { useState } from "react";
-import { UserOutlined } from "@ant-design/icons";
-import { Form, Input, Typography, Popover } from "antd";
+import { useState } from 'react';
+import { UserOutlined } from '@ant-design/icons';
+import { Form, Input, Typography } from 'antd';
 
-import SubmitButton from "../../components/ui/SubmitButton";
-import "../../css/acceptSendEmailStyle.css";
-import { acceptSendEmail } from "../../services/auth";
+import SubmitButton from '../../components/ui/SubmitButton';
+import { acceptSendEmail } from '../../services/auth';
+
+import '../../css/acceptSendEmailStyle.css';
 
 export default function AcceptToSentEmailResetPassword() {
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
   const [error, setError] = useState(null);
-
+  const [success, setSuccess] = useState(null);
   const [form] = Form.useForm();
 
-  const [open, setOpen] = useState(false);
-  const hide = () => {
-    setOpen(false);
-  };
-  const handleOpenChange = (newOpen) => {
-    setOpen(newOpen);
-  };
-
   const onFinish = (values) => {
-    console.log("Received values of form: ", values);
+    console.log('Received values of form: ', values);
   };
 
   const handleAcceptToSendEmail = async () => {
@@ -31,10 +24,10 @@ export default function AcceptToSentEmailResetPassword() {
       await acceptSendEmail(data);
 
       // Optionally, you can perform additional actions after the email is sent
-      console.log("Email sent successfully!");
+      setSuccess(true);
+      setError(false);
     } catch (error) {
-      // Handle any validation errors or other issues
-      console.error("Error handling form submission:", error);
+      setError('Thông tin email không chính xác');
     }
   };
 
@@ -43,8 +36,7 @@ export default function AcceptToSentEmailResetPassword() {
       <div className="title-accept-send-email">Lấy lại mật khẩu</div>
       <div className="container-accept-send-email">
         <div className="content-accept-send-email">
-          Vui lòng nhập email mà bạn đã đăng kí tài khoản với hệ thống của chúng
-          tôi
+          Vui lòng nhập email mà bạn đã đăng kí tài khoản với hệ thống của chúng tôi
         </div>
       </div>
       <Form
@@ -63,15 +55,11 @@ export default function AcceptToSentEmailResetPassword() {
           rules={[
             {
               required: true,
-              message: "Please input your email!",
+              message: 'Please input your email!',
             },
           ]}
         >
-          <Input
-            size="large"
-            prefix={<UserOutlined className="site-form-item-icon" />}
-            placeholder="Email"
-          />
+          <Input size="large" prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Email" />
         </Form.Item>
 
         {error && (
@@ -79,25 +67,23 @@ export default function AcceptToSentEmailResetPassword() {
             <Typography.Text type="danger">{error}</Typography.Text>
           </Form.Item>
         )}
+        {success && (
+          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            <Typography.Text type="success">Gửi email xác nhận thành công</Typography.Text>
+          </Form.Item>
+        )}
 
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <Popover
-            title="Mời bạn check email"
-            trigger="click"
-            open={open}
-            onOpenChange={handleOpenChange}
+          <SubmitButton
+            form={form}
+            type="primary"
+            loading={loading}
+            htmlType="submit"
+            className="accept-send-email-form-button"
+            onClick={handleAcceptToSendEmail}
           >
-            <SubmitButton
-              form={form}
-              type="primary"
-              loading={loading}
-              htmlType="submit"
-              className="accept-send-email-form-button"
-              onClick={handleAcceptToSendEmail}
-            >
-              Gửi email xác nhận
-            </SubmitButton>
-          </Popover>
+            Gửi email xác nhận
+          </SubmitButton>
         </Form.Item>
       </Form>
     </div>

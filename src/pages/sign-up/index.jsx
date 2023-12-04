@@ -1,13 +1,14 @@
-import { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Form, Input, Typography, Popover } from "antd";
+import { useContext, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { Form, Input, Popover, Typography } from 'antd';
 
-import SubmitButton from "../../components/ui/SubmitButton";
-import AuthContext from "../../contexts/auth/auth-context";
-import { signUp } from "../../services/auth";
+import SubmitButton from '../../components/ui/SubmitButton';
+import AuthContext from '../../contexts/auth/auth-context';
+import { setJwt } from '../../libs/utils/localStorage';
+import { signUp } from '../../services/auth';
 
-import "../../css/signupStyle.css";
+import '../../css/signupStyle.css';
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -16,36 +17,40 @@ export default function SignUp() {
   const { setUser } = useContext(AuthContext);
 
   const [open, setOpen] = useState(false);
-  const hide = () => {
-    setOpen(false);
-  };
+
   const handleOpenChange = (newOpen) => {
     setOpen(newOpen);
   };
 
   const onFinish = (values) => {
-    console.log("Received values of form: ", values);
+    console.log('Received values of form: ', values);
   };
 
   const handleSignUp = async () => {
     try {
-      const data = form.getFieldValue();
+      const { fullname, email, password, confirmPassword, telephone, address } = form.getFieldValue();
       const dataCallAPI = {
-        name: data.fullname,
-        email: data.email,
-        password: data.password,
-        confirmPassword: data.confirmPassword,
-        phone: data.telephone,
-        address: data.address,
+        name: fullname,
+        email,
+        password,
+        confirmPassword,
+        phone: telephone,
+        address,
       };
-      console.log("AloAlo123: ", dataCallAPI);
       setError(null);
       setLoading(true);
       const dataReturn = await signUp(dataCallAPI);
+      const dataUser = dataReturn.data;
+      const token = dataUser.token;
+
+      if (dataUser.status == 'success') {
+        setUser(dataUser.data.user);
+        setJwt(token);
+        navigate('/home');
+      }
       setLoading(false);
-      console.log("API Response: ", dataReturn);
     } catch (error) {
-      setError("Email đã tồn tại");
+      setError('Email đã tồn tại');
       setLoading(false);
     }
   };
@@ -71,7 +76,7 @@ export default function SignUp() {
           rules={[
             {
               required: true,
-              message: "Please input your fullname!",
+              message: 'Please input your fullname!',
             },
           ]}
         >
@@ -84,7 +89,7 @@ export default function SignUp() {
           rules={[
             {
               required: true,
-              message: "Please input your telephone!",
+              message: 'Please input your telephone!',
             },
           ]}
         >
@@ -97,7 +102,7 @@ export default function SignUp() {
           rules={[
             {
               required: true,
-              message: "Please input your address!",
+              message: 'Please input your address!',
             },
           ]}
         >
@@ -110,15 +115,11 @@ export default function SignUp() {
           rules={[
             {
               required: true,
-              message: "Please input your email!",
+              message: 'Please input your email!',
             },
           ]}
         >
-          <Input
-            size="large"
-            prefix={<UserOutlined className="site-form-item-icon" />}
-            placeholder="Email"
-          />
+          <Input size="large" prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Email" />
         </Form.Item>
 
         <Form.Item
@@ -127,7 +128,7 @@ export default function SignUp() {
           rules={[
             {
               required: true,
-              message: "Please input your Password!",
+              message: 'Please input your Password!',
             },
           ]}
         >
@@ -145,16 +146,14 @@ export default function SignUp() {
           rules={[
             {
               required: true,
-              message: "Please input your Confirm Password!",
+              message: 'Please input your Confirm Password!',
             },
             {
               validator: (_, value) => {
-                if (!value || form.getFieldValue("password") === value) {
+                if (!value || form.getFieldValue('password') === value) {
                   return Promise.resolve();
                 }
-                return Promise.reject(
-                  new Error("The two passwords do not match!")
-                );
+                return Promise.reject(new Error('The two passwords do not match!'));
               },
             },
           ]}
@@ -173,12 +172,7 @@ export default function SignUp() {
           </Form.Item>
         )}
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <Popover
-            title="Mời bạn check email"
-            trigger="click"
-            open={open}
-            onOpenChange={handleOpenChange}
-          >
+          <Popover title="Mời bạn check email" trigger="click" open={open} onOpenChange={handleOpenChange}>
             <SubmitButton
               form={form}
               type="primary"
@@ -190,8 +184,8 @@ export default function SignUp() {
               Đăng kí
             </SubmitButton>
           </Popover>
-          Or{" "}
-          <Link to="/sign-in" style={{ fontSize: "16px" }}>
+          Or{' '}
+          <Link to="/sign-in" style={{ fontSize: '16px' }}>
             log in now!
           </Link>
         </Form.Item>

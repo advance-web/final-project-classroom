@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Form, Input, Typography } from 'antd';
+import { Flex, Form, Input, Typography } from 'antd';
 
 import SubmitButton from '../../components/ui/SubmitButton';
 import AuthContext from '../../contexts/auth/auth-context';
@@ -28,26 +28,22 @@ export default function SignIn() {
         email: data.email,
         password: data.password,
       };
-      console.log('AloAlo123: ', dataCallAPI);
       setLoading(true);
       const dataReturn = await signIn(dataCallAPI);
       setLoading(false);
       const dataUser = dataReturn.data;
 
-      const status = dataUser.status;
       const token = dataUser.token;
+      console.log(dataUser);
+      const { id, email, name, phone, address, verify } = dataUser.data.user;
       const userSignin = {
-        id: dataUser.data.user.id,
-        email: dataUser.data.user.email,
-        name: dataUser.data.user.name,
-        phone: dataUser.data.user.phone,
-        address: dataUser.data.user.address,
+        id,
+        email,
+        name,
+        phone,
+        address,
+        verify,
       };
-
-      console.log('API Response: ', dataUser);
-      console.log('Status: ', status);
-      console.log('Token: ', token);
-      console.log('Data user: ', userSignin);
 
       if (dataUser.status == 'success') {
         setUser(userSignin);
@@ -115,8 +111,10 @@ export default function SignIn() {
             </Typography.Text>
           </Form.Item>
         )}
-
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+          <Link to="/accept-send-email" style={{ fontSize: '16px' }}>
+            Quên mật khẩu
+          </Link>
           <SubmitButton
             form={form}
             type="primary"
@@ -133,10 +131,10 @@ export default function SignIn() {
           </Link>
         </Form.Item>
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <a href="http://localhost:3000/auth/login/facebook">Đăng nhập bằng facebook 12</a>
-        </Form.Item>
-        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <a href="http://localhost:3000/auth/login/google">Đăng nhập bằng Google</a>
+          <Flex vertical>
+            <a href="http://localhost:3000/auth/login/facebook">Đăng nhập bằng Facebook</a>
+            <a href="http://localhost:3000/auth/login/google">Đăng nhập bằng Google</a>
+          </Flex>
         </Form.Item>
       </Form>
     </div>

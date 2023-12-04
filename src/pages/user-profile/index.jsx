@@ -33,7 +33,7 @@ export default function UserProfile() {
       //setLoading(false)
       console.log('API Response: ', dataReturn);
 
-      const dataUser = dataReturn.data.data.data;
+      const dataUser = dataReturn.data.data;
       const status = dataReturn.data.status;
 
       console.log('Status: ', status);
@@ -112,7 +112,6 @@ export default function UserProfile() {
             <Typography.Text type="danger">{error}</Typography.Text>
           </Form.Item>
         )}
-
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
           <Button type="primary" htmlType="submit" className="user-profile-form-button" onClick={handleUserProfile}>
             Cập nhật thông tin

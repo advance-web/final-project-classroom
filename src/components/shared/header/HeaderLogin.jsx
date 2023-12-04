@@ -1,10 +1,11 @@
 import { useContext } from 'react';
 import { BiPlanet } from 'react-icons/bi';
 import { Link } from 'react-router-dom';
-import { Button, Layout, Menu } from 'antd';
+import { Button, Flex, Layout, Menu } from 'antd';
 
 import AuthContext from '../../../contexts/auth/auth-context';
 import { logOut } from '../../../services/auth';
+import VerifyStatus from '../../VerifyStatus';
 
 const { Header } = Layout;
 
@@ -70,7 +71,10 @@ const HeaderLogin = () => {
             }}
             onClick={(e) => e.preventDefault()}
           >
-            <span>Xin chào {user.name}</span>
+            <Flex align="center" gap={4}>
+              <span>Xin chào {user.name}</span>
+              <VerifyStatus verify={user.verify} />
+            </Flex>
           </Menu.Item>
           <Menu.Item key="4" onClick={(e) => e.preventDefault()}>
             <Button

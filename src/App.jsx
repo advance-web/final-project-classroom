@@ -45,9 +45,7 @@ function App() {
   useEffect(() => {
     const initUserData = async () => {
       try {
-        console.log('getme');
         const response = await getMe();
-        console.log('Response: ', response);
         const userData = response.data.data;
         setUser(userData);
       } catch (err) {
