@@ -1,16 +1,24 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { BiPlanet } from 'react-icons/bi';
-import { Link } from 'react-router-dom';
-import { Button, Flex, Layout, Menu } from 'antd';
+import { Link, Outlet } from 'react-router-dom';
+import {
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  UploadOutlined,
+  UserOutlined,
+  VideoCameraOutlined,
+} from '@ant-design/icons';
+import { Button, Card, Flex, Layout, Menu } from 'antd';
 
 import AuthContext from '../../../contexts/auth/auth-context';
 import { logOut } from '../../../services/auth';
 import VerifyStatus from '../../VerifyStatus';
 
-const { Header } = Layout;
+const { Header, Sider, Content } = Layout;
 
 const HeaderLogin = () => {
   const { user, setUser } = useContext(AuthContext);
+  const [collapsed, setCollapsed] = useState(false);
 
   return (
     <Layout
@@ -27,6 +35,20 @@ const HeaderLogin = () => {
           boxShadow: 'rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px',
         }}
       >
+        <Button
+          type="text"
+          icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+          onClick={() => setCollapsed(!collapsed)}
+          style={{
+            fontSize: '16px',
+            width: 64,
+            height: 64,
+            backgroundColor: 'white',
+            borderRadius: 0,
+            borderBottom: '1px solid #f0f0f0',
+            borderTop: '1px solid rgba(0, 0, 0, 0.88)',
+          }}
+        />
         <div className="demo-logo" />
 
         {/* Left-aligned menu items */}
@@ -41,16 +63,13 @@ const HeaderLogin = () => {
           }}
         >
           <Menu.Item key="1">
-            <Link to="/home">
-              <p style={{ marginRight: '8px', lineHeight: '0px' }}>
+            <Link to="/">
+              <p style={{ marginRight: '8px', lineHeight: '0px', padding: '0 20px' }}>
                 {' '}
                 {/* Adjust margin as needed */}
                 <BiPlanet size={35} />
               </p>
             </Link>
-          </Menu.Item>
-          <Menu.Item key="2">
-            <Link to="/user-profile">Thông tin cá nhân</Link>
           </Menu.Item>
         </Menu>
 
@@ -65,7 +84,7 @@ const HeaderLogin = () => {
           }}
         >
           <Menu.Item
-            key="3"
+            key="2"
             style={{
               cursor: 'initial', // Set the cursor to 'initial' to remove the pointer
             }}
@@ -76,7 +95,7 @@ const HeaderLogin = () => {
               <VerifyStatus verify={user.verify} />
             </Flex>
           </Menu.Item>
-          <Menu.Item key="4" onClick={(e) => e.preventDefault()}>
+          <Menu.Item key="3" onClick={(e) => e.preventDefault()}>
             <Button
               onClick={() => {
                 logOut();
@@ -89,6 +108,48 @@ const HeaderLogin = () => {
           </Menu.Item>
         </Menu>
       </Header>
+
+      <Content style={{}}>
+        <Layout>
+          <Sider
+            trigger={null}
+            collapsible
+            collapsed={collapsed}
+            style={{
+              backgroundColor: 'white',
+              border: '1px solid #f0f0f0',
+            }}
+          >
+            <div className="demo-logo-vertical" />
+            <Menu
+              theme="light"
+              mode="inline"
+              // defaultSelectedKeys={['1']}
+              style={{
+                border: 0,
+              }}
+            >
+              <Menu.Item key="4" icon={<UserOutlined />}>
+                <Link to="/">Màn hình chính</Link>
+              </Menu.Item>
+              <Menu.Item key="5" icon={<VideoCameraOutlined />}>
+                <Link to="/home">Home</Link>
+              </Menu.Item>
+              <Menu.Item key="6" icon={<UploadOutlined />}>
+                <Link to="/user-profile">Thông tin cá nhân</Link>
+              </Menu.Item>
+            </Menu>
+          </Sider>
+          <Card
+            style={{
+              width: '100%',
+              borderRadius: '0',
+            }}
+          >
+            <Outlet />
+          </Card>
+        </Layout>
+      </Content>
     </Layout>
   );
 };

@@ -33,13 +33,10 @@ const HeaderNotLogin = () => {
         >
           <Menu.Item key="1">
             <Link to="/home">
-              <p style={{ marginRight: '8px', lineHeight: '0px' }}>
+              <p style={{ marginRight: '8px', lineHeight: '0px', padding: '0 20px' }}>
                 <BiPlanet size={35} />
               </p>
             </Link>
-          </Menu.Item>
-          <Menu.Item key="2">
-            <Link to="/user-profile">User</Link>
           </Menu.Item>
         </Menu>
 
