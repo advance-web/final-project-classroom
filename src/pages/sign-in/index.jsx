@@ -1,10 +1,11 @@
 import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Flex, Form, Input, Typography } from 'antd';
+import { FacebookOutlined, GoogleOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Flex, Form, Input, Typography } from 'antd';
 
 import SubmitButton from '../../components/ui/SubmitButton';
 import AuthContext from '../../contexts/auth/auth-context';
+import { APP_CONFIGS } from '../../libs/constants/appConfig';
 import { setJwt } from '../../libs/utils/localStorage';
 import { signIn } from '../../services/auth';
 
@@ -132,8 +133,23 @@ export default function SignIn() {
         </Form.Item>
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
           <Flex vertical>
-            <a href="http://localhost:3000/auth/login/facebook">Đăng nhập bằng Facebook</a>
-            <a href="http://localhost:3000/auth/login/google">Đăng nhập bằng Google</a>
+            <a href={`${APP_CONFIGS.API_URL}/auth/login/facebook`}>
+              <Button
+                icon={<FacebookOutlined />}
+                style={{ background: '#3b5998', color: 'white', maxWidth: '250px', margin: '8px' }}
+              >
+                Đăng nhập bằng Facebook
+              </Button>
+            </a>
+
+            <a href={`${APP_CONFIGS.API_URL}/auth/login/google`}>
+              <Button
+                icon={<GoogleOutlined />}
+                style={{ background: '#dd4b39', color: 'white', maxWidth: '250px', margin: '8px' }}
+              >
+                Đăng nhập bằng Google
+              </Button>
+            </a>
           </Flex>
         </Form.Item>
       </Form>
