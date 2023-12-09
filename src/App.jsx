@@ -6,7 +6,9 @@ import { createGlobalStyle } from 'styled-components';
 import Page_Layout from './components/shared/layout';
 import AuthContext from './contexts/auth/auth-context';
 import AcceptToSentEmailResetPassword from './pages/accept-send-email';
+import AllClassroomOfUser from './pages/all-classrooms-of-user';
 import ClassDetail from './pages/class-detail';
+import CreateClassroom from './pages/create-classroom';
 import Home from './pages/home';
 import Landing from './pages/landing';
 import LoginSuccess from './pages/notification/login-success';
@@ -121,6 +123,8 @@ function App() {
 
           <Route path="/login-success/:token" element={<LoginSuccess />} />
           <Route path="/class-detail" element={<ClassDetail />} />
+          <Route path="/create-classroom" element={<CreateClassroom />} />
+          <Route path="/all-classrooms" element={<AllClassroomOfUser />} />
         </Route>
         <Route path="/verify" element={<SuccessPage />} />
       </Routes>
