@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Form, Input, Popover, Typography } from 'antd';
+import { Form, Input, Popover, Radio, Typography } from 'antd';
 
 import SubmitButton from '../../components/ui/SubmitButton';
 import AuthContext from '../../contexts/auth/auth-context';
@@ -28,7 +28,7 @@ export default function SignUp() {
 
   const handleSignUp = async () => {
     try {
-      const { fullname, email, password, confirmPassword, telephone, address } = form.getFieldValue();
+      const { fullname, email, password, confirmPassword, telephone, address, role } = form.getFieldValue();
       const dataCallAPI = {
         name: fullname,
         email,
@@ -36,7 +36,10 @@ export default function SignUp() {
         confirmPassword,
         phone: telephone,
         address,
+        role,
       };
+      console.log(dataCallAPI);
+
       setError(null);
       setLoading(true);
       const dataReturn = await signUp(dataCallAPI);
@@ -50,6 +53,7 @@ export default function SignUp() {
       }
       setLoading(false);
     } catch (error) {
+      console.log('error');
       setError('Email đã tồn tại');
       setLoading(false);
     }
@@ -165,7 +169,12 @@ export default function SignUp() {
             placeholder="Confirm Password"
           />
         </Form.Item>
-
+        <Form.Item label="Role" name="role">
+          <Radio.Group defaultValue="student">
+            <Radio.Button value="student">Student</Radio.Button>
+            <Radio.Button value="teacher">Teacher</Radio.Button>
+          </Radio.Group>
+        </Form.Item>
         {error && (
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
             <Typography.Text type="danger">{error}</Typography.Text>

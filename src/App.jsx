@@ -1,11 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { createGlobalStyle } from 'styled-components';
 
 import Page_Layout from './components/shared/layout';
 import AuthContext from './contexts/auth/auth-context';
+import NotificationContext from './contexts/notification/notificationContext';
 import NotificationPopupProvider from './contexts/notification-popup/notification-popup-provider';
+import useAuth from './hooks/useAuth';
 import AcceptToSentEmailResetPassword from './pages/accept-send-email';
 import ClassDetail from './pages/class-detail';
 import ShowClassroomMembers from './pages/classroom-members';
@@ -41,6 +43,25 @@ const AuthRoute = ({ user, children }) => {
 
 AuthRoute.propTypes = {
   user: PropTypes.object,
+  children: PropTypes.node,
+};
+
+const RestrictedRoute = ({ role, children }) => {
+  const { user } = useAuth();
+  const { openNotification } = useContext(NotificationContext);
+  if (!user || user.role !== role) {
+    openNotification({
+      title: 'Không có quyền truy cập',
+      type: 'error',
+      description: 'Hãy đăng nhập với quyền phù hợp để truy cập chức năng',
+    });
+    return <Navigate to="/" replace />;
+  }
+  return children;
+};
+
+RestrictedRoute.propTypes = {
+  role: PropTypes.string,
   children: PropTypes.node,
 };
 
