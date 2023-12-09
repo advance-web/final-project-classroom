@@ -11,9 +11,14 @@ const Page_Layout = () => {
   console.log('user:', user);
   return (
     <div>
-      {user ? <HeaderLogin /> : <HeaderNotLogin />}
-
-      <Outlet />
+      {user ? (
+        <HeaderLogin />
+      ) : (
+        <>
+          <HeaderNotLogin />
+          <Outlet />
+        </>
+      )}
     </div>
   );
 };
