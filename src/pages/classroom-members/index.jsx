@@ -6,29 +6,6 @@ import { Avatar, List } from 'antd';
 import SubMenu from '../../components/shared/subMenu';
 import { getClassroomParticipant } from '../../services/classroom';
 
-/*const listMembers = [
-  {
-    name: 'Trần Khánh Hoàng',
-    email: '20120290@student.hcmus.edu.vn',
-  },
-  {
-    name: 'Trần Khánh Hoàng',
-    email: '20120290@student.hcmus.edu.vn',
-  },
-  {
-    name: 'Trần Khánh Hoàng',
-    email: '20120290@student.hcmus.edu.vn',
-  },
-  {
-    name: 'Trần Khánh Hoàng',
-    email: '20120290@student.hcmus.edu.vn',
-  },
-  {
-    name: 'Trần Khánh Hoàng',
-    email: '20120290@student.hcmus.edu.vn',
-  },
-];*/
-
 export default function ShowClassroomMembers() {
   const [classParticipants, setClassParticipants] = useState();
   const location = useLocation();
