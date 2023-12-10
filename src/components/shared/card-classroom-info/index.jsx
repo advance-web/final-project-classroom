@@ -5,7 +5,7 @@ export default function CardClassroomInfo(props) {
   return (
     <div>
       <Card
-        title={data.classroomName}
+        title={data.name}
         bordered={false}
         style={{
           width: 300,

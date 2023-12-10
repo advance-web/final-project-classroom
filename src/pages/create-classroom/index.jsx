@@ -1,16 +1,21 @@
 import { useContext, useState } from 'react';
-import { Button, Form, Input, InputNumber, Modal, Typography } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import { Form, Input, InputNumber, Typography } from 'antd';
 
 import SubmitButton from '../../components/ui/SubmitButton';
 import AuthContext from '../../contexts/auth/auth-context';
+import { createClassroom } from '../../services/classroom';
 
+//import { NotificationPopupContext } from '../../contexts/notification-popup/notification-popup-context';
 import '../../css/signupStyle.css';
 
 export default function CreateClassroom() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [successModalVisible, setSuccessModalVisible] = useState(false);
+  //const { showNotification } = useContext(NotificationPopupContext);
   const { user } = useContext(AuthContext);
+
+  const navigate = useNavigate();
 
   const onFinish = (values) => {
     console.log('Received values of form: ', values);
@@ -18,34 +23,35 @@ export default function CreateClassroom() {
 
   console.log('User: ', user);
 
-  const showSuccessMessage = () => {
-    setSuccessModalVisible(true);
-  };
-
-  const handleOk = () => {
-    setSuccessModalVisible(false);
-  };
-
-  const handleCancel = () => {
-    setSuccessModalVisible(false);
-  };
+  /*const showSuccessMessage = () => {
+    showNotification({
+      title: 'Tạo phòng học thành công',
+      message: 'Bạn vừa tạo mới phòng học thành công',
+    });
+  };*/
 
   const handleCreateClassroom = async () => {
     try {
       const { classroomName, subjectName, maxStudent, description } = form.getFieldValue();
       const dataCallAPI = {
-        classroomName: classroomName,
-        subjectName: subjectName,
+        name: classroomName,
+        subject: subjectName,
         maxStudent: maxStudent,
         description: description,
       };
 
       console.log(dataCallAPI);
-      showSuccessMessage();
       setError(null);
-      setLoading(true);
-
+      const dataRespond = await createClassroom(dataCallAPI);
       setLoading(false);
+      console.log(dataRespond);
+
+      if (dataRespond.data.status == 'success') {
+        navigate('/create-classroom');
+        //showSuccessMessage();
+      }
+
+      form.submit();
     } catch (error) {
       console.log('Error');
       //setError('Email đã tồn tại');
@@ -138,20 +144,6 @@ export default function CreateClassroom() {
           </SubmitButton>
         </Form.Item>
       </Form>
-
-      <Modal
-        title="Tạo lớp học thành công"
-        visible={successModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        footer={[
-          <Button key="ok" type="primary" onClick={handleOk}>
-            OK
-          </Button>,
-        ]}
-      >
-        <p>Bạn vừa tạo lớp học thành công</p>
-      </Modal>
     </div>
   );
 }
