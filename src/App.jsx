@@ -9,6 +9,7 @@ import NotificationPopupProvider from './contexts/notification-popup/notificatio
 import AcceptToSentEmailResetPassword from './pages/accept-send-email';
 import AllClassroomOfUser from './pages/all-classrooms-of-user';
 import ClassDetail from './pages/class-detail';
+import ShowClassroomMembers from './pages/classroom-members';
 import CreateClassroom from './pages/create-classroom';
 import Home from './pages/home';
 import Landing from './pages/landing';
@@ -123,7 +124,8 @@ function App() {
           />
 
           <Route path="/login-success/:token" element={<LoginSuccess />} />
-          <Route path="/class-detail/:token" element={<ClassDetail />} />
+          <Route path="/class-detail/:id" element={<ClassDetail />} />
+          <Route path="/class-members/:id" element={<ShowClassroomMembers />} />
           <Route
             path="/create-classroom"
             element={
