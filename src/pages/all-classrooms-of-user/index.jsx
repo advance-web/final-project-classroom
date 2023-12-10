@@ -5,31 +5,6 @@ import { Col, Row } from 'antd';
 import CardClassroomInfo from '../../components/shared/card-classroom-info';
 import { getMyClassroom } from '../../services/classroom';
 
-/*
-const listClassrooms = [
-  {
-    classroomID: 'CL123',
-    classroomName: 'Toán cao cấp 20CTT3',
-    subject: 'Toán cao cấp',
-    teacher: 'Nguyen Van B',
-    description: 'Lớp này rất hay bạn có thể tham gia ngay và luôn',
-  },
-  {
-    classroomID: 'CL124',
-    classroomName: 'Toán cao cấp 20CTT4',
-    subject: 'Toán cao cấp',
-    teacher: 'Nguyen Van B',
-    description: 'Lớp này rất hay bạn có thể tham gia ngay và luôn',
-  },
-  {
-    classroomID: 'CL125',
-    classroomName: 'Toán cao cấp 20CTT3',
-    subject: 'Toán cao cấp',
-    teacher: 'Nguyen Van B',
-    description: 'Lớp này rất hay bạn có thể tham gia ngay và luôn',
-  },
-];
-*/
 export default function AllClassroomsOfUser() {
   const [listClassrooms, setListClassrooms] = useState([]);
 

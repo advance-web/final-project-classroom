@@ -6,13 +6,11 @@ import SubmitButton from '../../components/ui/SubmitButton';
 import AuthContext from '../../contexts/auth/auth-context';
 import { createClassroom } from '../../services/classroom';
 
-//import { NotificationPopupContext } from '../../contexts/notification-popup/notification-popup-context';
 import '../../css/signupStyle.css';
 
 export default function CreateClassroom() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  //const { showNotification } = useContext(NotificationPopupContext);
   const { user } = useContext(AuthContext);
 
   const navigate = useNavigate();
@@ -22,13 +20,6 @@ export default function CreateClassroom() {
   };
 
   console.log('User: ', user);
-
-  /*const showSuccessMessage = () => {
-    showNotification({
-      title: 'Tạo phòng học thành công',
-      message: 'Bạn vừa tạo mới phòng học thành công',
-    });
-  };*/
 
   const handleCreateClassroom = async () => {
     try {
@@ -48,13 +39,11 @@ export default function CreateClassroom() {
 
       if (dataRespond.data.status == 'success') {
         navigate('/create-classroom');
-        //showSuccessMessage();
       }
 
       form.submit();
     } catch (error) {
       console.log('Error');
-      //setError('Email đã tồn tại');
       setLoading(false);
     }
   };

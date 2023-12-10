@@ -7,7 +7,6 @@ import SubMenu from '../../components/shared/subMenu';
 import { getDetailClassroomById } from '../../services/classroom';
 
 function ClassDetail() {
-  //const [loading, setLoading] = useState(false);
   const [detailClass, setDetailClass] = useState();
   const location = useLocation();
   console.log('Location: ', location);
@@ -19,7 +18,6 @@ function ClassDetail() {
   const idClass = location.pathname.split('/').pop();
   console.log('ID Class: ', idClass);
 
-  //setLoading(true);
   const handleUpdateClassroom = () => {
     console.log('Updated classroom');
   };
@@ -36,7 +34,6 @@ function ClassDetail() {
 
   console.log('Detail class: ', detailClass);
 
-  //setLoading(false);
   const [form] = Form.useForm();
 
   return (
