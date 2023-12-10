@@ -34,7 +34,7 @@ export default function ShowClassroomMembers() {
   const location = useLocation();
   console.log('Location: ', location);
 
-  const idClass = location.pathname.split('/').pop();
+  const idClass = location.pathname.split('/')[2];
   console.log('ID Class: ', idClass);
 
   useEffect(() => {

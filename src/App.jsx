@@ -124,8 +124,8 @@ function App() {
           />
 
           <Route path="/login-success/:token" element={<LoginSuccess />} />
-          <Route path="/class-detail/:id" element={<ClassDetail />} />
-          <Route path="/class-members/:id" element={<ShowClassroomMembers />} />
+          <Route path="/classroom/:id" element={<ClassDetail />} />
+          <Route path="/classroom/:id/participants" element={<ShowClassroomMembers />} />
           <Route
             path="/create-classroom"
             element={

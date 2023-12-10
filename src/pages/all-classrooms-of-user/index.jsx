@@ -23,7 +23,7 @@ export default function AllClassroomsOfUser() {
       <Row gutter={[32, 32]} justify="center">
         {listClassrooms?.map((classroom) => (
           <Col style={{ marginTop: 16 }} key={classroom.classroom._id}>
-            <Link to={`/class-detail/${classroom.classroom._id}`}>
+            <Link to={`/classroom/${classroom.classroom._id}`}>
               <CardClassroomInfo data={classroom.classroom} />
             </Link>
           </Col>
