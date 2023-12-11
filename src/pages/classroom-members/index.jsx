@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { UserOutlined } from '@ant-design/icons';
 import { Avatar, Button, List } from 'antd';
 
 import SubMenu from '../../components/shared/subMenu';
+import NotificationContext from '../../contexts/notification/notificationContext';
 import { getClassroomParticipant } from '../../services/classroom';
 import { inviteClassroom } from '../../services/teacher';
 
@@ -13,6 +14,7 @@ export default function ShowClassroomMembers() {
   const [classParticipants, setClassParticipants] = useState();
   const [openInviteModal, setOpenInviteModal] = useState(false);
   const [email, setEmail] = useState('');
+  const { openNotification } = useContext(NotificationContext);
 
   const location = useLocation();
   console.log('Location: ', location);
@@ -39,10 +41,17 @@ export default function ShowClassroomMembers() {
 
   const handleInviteByEmail = async () => {
     try {
-      const data = await inviteClassroom({ email, classroom: idClass });
-      console.log(data);
+      const { data: response } = await inviteClassroom({ email, classroom: idClass });
+      console.log(response);
+      openNotification({ type: 'success', title: 'Thêm thành viên', description: 'Thêm thành viên mới thành công' });
+      setOpenInviteModal(false);
+      if (response.data.inviteUser) {
+        setClassParticipants([...classParticipants, response.data.inviteUser]);
+      }
     } catch (err) {
       console.log(err);
+      openNotification({ type: 'error', title: 'Thêm thành viên', description: 'Thêm thành viên mới thất bại' });
+      setOpenInviteModal(false);
     }
   };
 
