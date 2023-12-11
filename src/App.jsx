@@ -149,6 +149,8 @@ function App() {
             }
           />
         </Route>
+
+        
         <Route path="/verify" element={<SuccessPage />} />
       </Routes>
     </>
