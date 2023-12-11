@@ -7,7 +7,6 @@ import Page_Layout from './components/shared/layout';
 import AuthContext from './contexts/auth/auth-context';
 import NotificationPopupProvider from './contexts/notification-popup/notification-popup-provider';
 import AcceptToSentEmailResetPassword from './pages/accept-send-email';
-import AllClassroomOfUser from './pages/all-classrooms-of-user';
 import ClassDetail from './pages/class-detail';
 import ShowClassroomMembers from './pages/classroom-members';
 import CreateClassroom from './pages/create-classroom';
@@ -82,14 +81,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-          {/* <Route
-            path="/class-detail"
-            element={
-              <ProtectedRoute user={user}>
-                <ClassDetail />
-              </ProtectedRoute>
-            }
-          /> */}
           <Route
             path="/sign-in"
             element={
@@ -134,7 +125,6 @@ function App() {
               </CreateClassroom>
             }
           />
-          <Route path="/all-classrooms" element={<AllClassroomOfUser />} />
         </Route>
         <Route path="/verify" element={<SuccessPage />} />
       </Routes>

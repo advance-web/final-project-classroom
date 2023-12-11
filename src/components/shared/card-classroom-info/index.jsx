@@ -5,15 +5,20 @@ export default function CardClassroomInfo(props) {
   return (
     <div>
       <Card
-        title={data.name}
+        title={<span style={{ fontSize: '18px' }}>{data.name}</span>}
         bordered={false}
         style={{
           width: 300,
         }}
       >
         <Typography.Paragraph>{data.subject}</Typography.Paragraph>
-        <Typography.Paragraph>{data.teacher}</Typography.Paragraph>
-        <Typography.Paragraph>{data.description}</Typography.Paragraph>
+        <Typography.Paragraph>
+          <h5> Giáo viên: </h5>
+          {data.teacher.name}
+        </Typography.Paragraph>
+        <Typography.Paragraph>
+          <h5> Mô tả khóa học: </h5> {data.description}
+        </Typography.Paragraph>
       </Card>
     </div>
   );

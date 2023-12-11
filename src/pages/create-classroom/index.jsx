@@ -52,7 +52,7 @@ export default function CreateClassroom() {
 
   return (
     <div className="signup">
-      <div className="title-signup">Tạo phòng học</div>
+      <div className="title-signup">Tạo lớp học</div>
       <Form
         form={form}
         name="normal_signup"
