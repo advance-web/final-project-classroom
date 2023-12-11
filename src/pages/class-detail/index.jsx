@@ -76,6 +76,7 @@ function ClassDetail() {
     copied: false,
   });
   console.log('Location: ', location);
+  const [form] = Form.useForm();
 
   const onFinish = (values) => {
     console.log('Received values of form: ', values);
@@ -83,10 +84,6 @@ function ClassDetail() {
 
   const idClass = location.pathname.split('/').pop();
   console.log('ID Class: ', idClass);
-
-  const handleUpdateClassroom = () => {
-    console.log('Updated classroom');
-  };
 
   useEffect(() => {
     const getDetailClassroom = async (id) => {
@@ -97,14 +94,19 @@ function ClassDetail() {
         ...prevCode,
         value: dataRespond.data.data.joinCode,
       }));
+
+      form.setFieldsValue({
+        classroom: dataRespond.data.data.name,
+        subject: dataRespond.data.data.subject,
+        maxStudent: dataRespond.data.data.maxStudent,
+        description: dataRespond.data.data.description,
+      });
     };
 
     getDetailClassroom(idClass);
-  }, [idClass]);
+  }, [idClass, form]);
 
   console.log('Detail class: ', detailClass);
-
-  const [form] = Form.useForm();
 
   function handleOnCopy() {
     console.log('Copying...');
@@ -165,12 +167,6 @@ function ClassDetail() {
               className="user-profile-form"
               labelCol={{ span: 8 }}
               wrapperCol={{ span: 16 }}
-              initialValues={{
-                classroom: detailClass?.name,
-                subject: detailClass?.subject,
-                maxStudent: detailClass?.maxStudent,
-                description: detailClass?.description,
-              }}
               style={{ maxWidth: 600, marginLeft: '8rem' }}
               onFinish={onFinish}
             >
@@ -229,17 +225,6 @@ function ClassDetail() {
                   readOnly
                   style={{ height: 150 }}
                 />
-              </Form.Item>
-
-              <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  className="user-profile-form-button"
-                  onClick={handleUpdateClassroom}
-                >
-                  Cập nhật thông tin
-                </Button>
               </Form.Item>
             </Form>
             <h1>Thông tin về giảng viên: </h1>
