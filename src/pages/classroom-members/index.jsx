@@ -1,13 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { UserOutlined } from '@ant-design/icons';
-import { Avatar, List } from 'antd';
+import { Avatar, Button, List } from 'antd';
 
 import SubMenu from '../../components/shared/subMenu';
 import { getClassroomParticipant } from '../../services/classroom';
+import { inviteClassroom } from '../../services/teacher';
+
+import InviteModal from './components/inviteModal';
 
 export default function ShowClassroomMembers() {
   const [classParticipants, setClassParticipants] = useState();
+  const [openInviteModal, setOpenInviteModal] = useState(false);
+  const [email, setEmail] = useState('');
+
   const location = useLocation();
   console.log('Location: ', location);
 
@@ -31,9 +37,27 @@ export default function ShowClassroomMembers() {
   console.log('List teachers: ', listTeachers);
   console.log('List students: ', listStudents);
 
+  const handleInviteByEmail = async () => {
+    try {
+      const data = await inviteClassroom({ email, classroom: idClass });
+      console.log(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <div>
       <SubMenu></SubMenu>
+      <div>
+        <Button onClick={() => setOpenInviteModal(true)}>+ Thêm thành viên mới</Button>
+        <InviteModal
+          open={openInviteModal}
+          onCancel={() => setOpenInviteModal(false)}
+          onOk={handleInviteByEmail}
+          onInputValueChange={(value) => setEmail(value)}
+        />
+      </div>
       <h2>Giáo viên</h2>
       <List
         dataSource={listTeachers}
