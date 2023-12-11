@@ -5,8 +5,11 @@ import { createGlobalStyle } from 'styled-components';
 
 import Page_Layout from './components/shared/layout';
 import AuthContext from './contexts/auth/auth-context';
+import NotificationPopupProvider from './contexts/notification-popup/notification-popup-provider';
 import AcceptToSentEmailResetPassword from './pages/accept-send-email';
 import ClassDetail from './pages/class-detail';
+import ShowClassroomMembers from './pages/classroom-members';
+import CreateClassroom from './pages/create-classroom';
 import Home from './pages/home';
 import Landing from './pages/landing';
 import LoginSuccess from './pages/notification/login-success';
@@ -78,14 +81,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-          {/* <Route
-            path="/class-detail"
-            element={
-              <ProtectedRoute user={user}>
-                <ClassDetail />
-              </ProtectedRoute>
-            }
-          /> */}
           <Route
             path="/sign-in"
             element={
@@ -120,7 +115,16 @@ function App() {
           />
 
           <Route path="/login-success/:token" element={<LoginSuccess />} />
-          <Route path="/class-detail" element={<ClassDetail />} />
+          <Route path="/classroom/:id" element={<ClassDetail />} />
+          <Route path="/classroom/:id/participants" element={<ShowClassroomMembers />} />
+          <Route
+            path="/create-classroom"
+            element={
+              <CreateClassroom>
+                <NotificationPopupProvider></NotificationPopupProvider>
+              </CreateClassroom>
+            }
+          />
         </Route>
         <Route path="/verify" element={<SuccessPage />} />
       </Routes>

@@ -4,8 +4,8 @@ import { Link, Outlet } from 'react-router-dom';
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  PlusCircleOutlined,
   UploadOutlined,
-  UserOutlined,
   VideoCameraOutlined,
 } from '@ant-design/icons';
 import { Button, Card, Flex, Layout, Menu } from 'antd';
@@ -124,19 +124,19 @@ const HeaderLogin = () => {
             <Menu
               theme="light"
               mode="inline"
-              // defaultSelectedKeys={['1']}
+              defaultSelectedKeys={['4']}
               style={{
                 border: 0,
               }}
             >
-              <Menu.Item key="4" icon={<UserOutlined />}>
-                <Link to="/">Màn hình chính</Link>
-              </Menu.Item>
-              <Menu.Item key="5" icon={<VideoCameraOutlined />}>
+              <Menu.Item key="4" icon={<VideoCameraOutlined />}>
                 <Link to="/home">Home</Link>
               </Menu.Item>
-              <Menu.Item key="6" icon={<UploadOutlined />}>
+              <Menu.Item key="5" icon={<UploadOutlined />}>
                 <Link to="/user-profile">Thông tin cá nhân</Link>
+              </Menu.Item>
+              <Menu.Item key="6" icon={<PlusCircleOutlined />}>
+                <Link to="/create-classroom">Tạo lớp học</Link>
               </Menu.Item>
             </Menu>
           </Sider>
