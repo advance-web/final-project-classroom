@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Form, Input, InputNumber, Typography } from 'antd';
+import { Button, Form, Input, InputNumber, Modal, Typography } from 'antd';
 
 import SubmitButton from '../../components/ui/SubmitButton';
 import AuthContext from '../../contexts/auth/auth-context';
@@ -11,6 +11,7 @@ import '../../css/signupStyle.css';
 export default function CreateClassroom() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [successModalVisible, setSuccessModalVisible] = useState(false);
   const { user } = useContext(AuthContext);
 
   const navigate = useNavigate();
@@ -20,6 +21,18 @@ export default function CreateClassroom() {
   };
 
   console.log('User: ', user);
+
+  const showSuccessMessage = () => {
+    setSuccessModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setSuccessModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setSuccessModalVisible(false);
+  };
 
   const handleCreateClassroom = async () => {
     try {
@@ -38,7 +51,8 @@ export default function CreateClassroom() {
       console.log(dataRespond);
 
       if (dataRespond.data.status == 'success') {
-        navigate('/create-classroom');
+        showSuccessMessage();
+        navigate('/create-classroom', { replace: true });
       }
 
       form.submit();
@@ -133,6 +147,20 @@ export default function CreateClassroom() {
           </SubmitButton>
         </Form.Item>
       </Form>
+
+      <Modal
+        title="Thông báo: Tạo lớp học"
+        visible={successModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={[
+          <Button key="ok" type="primary" onClick={handleOk}>
+            OK
+          </Button>,
+        ]}
+      >
+        <p>Bạn vừa tạo lớp học mới thành công</p>
+      </Modal>
     </div>
   );
 }
