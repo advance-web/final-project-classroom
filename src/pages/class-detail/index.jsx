@@ -29,7 +29,7 @@ const Context = React.createContext({
   name: 'Default',
 });
 
-function Content({ code, onCopy }) {
+function Content({ code, onCopy, classroomId }) {
   const [api, contextHolder] = notification.useNotification({
     // maxCount: 1,
     stack: { threshold: 1 },
@@ -54,7 +54,7 @@ function Content({ code, onCopy }) {
       {contextHolder}
       <ContentStyle>
         <CopyToClipboard
-          text={`http://localhost:3001/classroom/invite/657470c16c0c38d280925955?joinCode=${code.value}`}
+          text={`http://localhost:3001/classroom/invite/${classroomId}?joinCode=${code.value}`}
           onCopy={onCopy}
         >
           <p onClick={() => openNotification('bottomLeft')}>Sao chép đường liên kết mời tham gia lớp học</p>
@@ -157,7 +157,7 @@ function ClassDetail() {
                 <p className="course-join-code-title">Mã lớp:</p>
                 <h4 className="course-join-code">{code.value}</h4>
               </div>
-              <Popover content={<Content code={code} onCopy={handleOnCopy} />} trigger="click">
+              <Popover content={<Content code={code} onCopy={handleOnCopy} classroomId={idClass} />} trigger="click">
                 <MoreOutlined className="icon" />
               </Popover>
             </div>
@@ -249,6 +249,7 @@ function ClassDetail() {
 Content.propTypes = {
   code: PropTypes.object.isRequired,
   onCopy: PropTypes.func.isRequired,
+  classroomId: PropTypes.string.isRequired,
 };
 
 export default ClassDetail;

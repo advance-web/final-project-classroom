@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+import { useContext } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Button, Card } from 'antd';
 
+import NotificationContext from '../../contexts/notification/notificationContext';
 import { inviteToClassroom } from '../../services/classroom';
 
 function AcceptJoinClass() {
@@ -10,17 +11,16 @@ function AcceptJoinClass() {
   const [searchParams] = useSearchParams();
   const joinCode = searchParams.get('joinCode');
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await inviteToClassroom(classroomId, joinCode);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
+  const { openNotification } = useContext(NotificationContext);
 
-    fetchData();
-  }, [classroomId, joinCode]);
+  const handleJoinClass = async () => {
+    try {
+      await inviteToClassroom(classroomId, joinCode);
+      openNotification({ type: 'success', title: 'Tham gia lớp học', description: 'Tham gia lớp học thành công' });
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <div>
@@ -51,7 +51,9 @@ function AcceptJoinClass() {
           }}
         >
           <p>Bạn đang tham gia lớp học với tư cách học viên.</p>
-          <Button type="primary">Tham gia lớp học</Button>
+          <Button onClick={handleJoinClass} type="primary">
+            Tham gia lớp học
+          </Button>
           <p>Bằng việc tham gia, bạn đồng ý chia sẻ thông tin liên hệ với những người trong lớp học của mình.</p>
         </div>
       </Card>
