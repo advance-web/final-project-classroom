@@ -8,6 +8,7 @@ import AuthContext from './contexts/auth/auth-context';
 import NotificationContext from './contexts/notification/notificationContext';
 import NotificationPopupProvider from './contexts/notification-popup/notification-popup-provider';
 import useAuth from './hooks/useAuth';
+import AcceptJoinClass from './pages/accept-join-class';
 import AcceptToSentEmailResetPassword from './pages/accept-send-email';
 import ClassDetail from './pages/class-detail';
 import ShowClassroomMembers from './pages/classroom-members';
@@ -138,6 +139,7 @@ function App() {
           <Route path="/login-success/:token" element={<LoginSuccess />} />
           <Route path="/classroom/:id" element={<ClassDetail />} />
           <Route path="/classroom/:id/participants" element={<ShowClassroomMembers />} />
+          <Route path="/classroom/invite/:classroomId" element={<AcceptJoinClass />} />
           <Route
             path="/create-classroom"
             element={

@@ -1,14 +1,80 @@
 import { useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useLocation } from 'react-router-dom';
+import { MoreOutlined } from '@ant-design/icons';
 import { MailOutlined, PhoneOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Card, Descriptions, Form, Input } from 'antd';
+import { Button, Card, Descriptions, Form, Input, notification, Popover } from 'antd';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
 
 import SubMenu from '../../components/shared/subMenu';
 import { getDetailClassroomById } from '../../services/classroom';
 
+const ContentStyle = styled.div`
+  p {
+    margin: 0;
+    padding: 12px;
+    margin-left: -12px;
+    margin-right: -12px;
+
+    &:hover {
+      background-color: #ccc;
+      cursor: pointer;
+    }
+  }
+`;
+
+const Context = React.createContext({
+  name: 'Default',
+});
+
+function Content({ code, onCopy }) {
+  const [api, contextHolder] = notification.useNotification({
+    // maxCount: 1,
+    stack: { threshold: 1 },
+  });
+
+  const openNotification = (placement) => {
+    api.info({
+      message: ``,
+      description: <Context.Consumer>{() => `Đã sao chép thành công`}</Context.Consumer>,
+      placement,
+    });
+  };
+  const contextValue = useMemo(
+    () => ({
+      name: 'Ant Design',
+    }),
+    []
+  );
+
+  return (
+    <Context.Provider value={contextValue}>
+      {contextHolder}
+      <ContentStyle>
+        <CopyToClipboard
+          text={`http://localhost:3001/classroom/invite/657470c16c0c38d280925955?joinCode=${code.value}`}
+          onCopy={onCopy}
+        >
+          <p onClick={() => openNotification('bottomLeft')}>Sao chép đường liên kết mời tham gia lớp học</p>
+        </CopyToClipboard>
+
+        <CopyToClipboard text={code.value} onCopy={onCopy}>
+          <p onClick={() => openNotification('bottomLeft')}>Sao chép mã lớp</p>
+        </CopyToClipboard>
+      </ContentStyle>
+    </Context.Provider>
+  );
+}
+
 function ClassDetail() {
   const [detailClass, setDetailClass] = useState();
   const location = useLocation();
+  const [code, setCode] = useState({
+    value: detailClass.joinCode,
+    copied: false,
+  });
   console.log('Location: ', location);
 
   const onFinish = (values) => {
@@ -35,6 +101,14 @@ function ClassDetail() {
   console.log('Detail class: ', detailClass);
 
   const [form] = Form.useForm();
+
+  function handleOnCopy() {
+    console.log('Copying...');
+    setCode((prevCode) => ({
+      ...prevCode,
+      copied: true,
+    }));
+  }
 
   return (
     <>
@@ -71,100 +145,121 @@ function ClassDetail() {
 
         <div className="course-info">
           <h1>Thông tin về khóa học</h1>
-          <Form
-            form={form}
-            name="normal_user-profile"
-            className="user-profile-form"
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
-            initialValues={{
-              classroom: detailClass?.name,
-              subject: detailClass?.subject,
-              maxStudent: detailClass?.maxStudent,
-              description: detailClass?.description,
-            }}
-            style={{ maxWidth: 600, marginLeft: '8rem' }}
-            onFinish={onFinish}
-          >
-            <Form.Item
-              label="Tên lớp học"
-              name="classroom"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input your classroom name!',
-                },
-              ]}
+          <div className="course-detail">
+            <div className="course-join-code-part">
+              <div>
+                <p className="course-join-code-title">Mã lớp:</p>
+                <h4 className="course-join-code">{code.value}</h4>
+              </div>
+              <Popover content={<Content code={code} onCopy={handleOnCopy} />} trigger="click">
+                <MoreOutlined className="icon" />
+              </Popover>
+            </div>
+            <Form
+              form={form}
+              name="normal_user-profile"
+              className="user-profile-form"
+              labelCol={{ span: 8 }}
+              wrapperCol={{ span: 16 }}
+              initialValues={{
+                classroom: detailClass?.name,
+                subject: detailClass?.subject,
+                maxStudent: detailClass?.maxStudent,
+                description: detailClass?.description,
+              }}
+              style={{ maxWidth: 600, marginLeft: '8rem' }}
+              onFinish={onFinish}
             >
-              <Input size="large" placeholder="Enter classroom name" readOnly value={detailClass?.name} />
-            </Form.Item>
-
-            <Form.Item
-              label="Tên môn học"
-              name="subject"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input your subject name!',
-                },
-              ]}
-            >
-              <Input size="large" placeholder="Enter subject name" readOnly />
-            </Form.Item>
-
-            <Form.Item
-              label="Số lượng học sinh"
-              name="maxStudent"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input your number of student!',
-                },
-              ]}
-            >
-              <Input type="number" size="large" placeholder="Enter number of student" readOnly />
-            </Form.Item>
-
-            <Form.Item
-              label="Mô tả lớp học"
-              name="description"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input your classroom description!',
-                },
-              ]}
-            >
-              <Input.TextArea size="large" placeholder="Enter classroom description" readOnly style={{ height: 150 }} />
-            </Form.Item>
-
-            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-              <Button
-                type="primary"
-                htmlType="submit"
-                className="user-profile-form-button"
-                onClick={handleUpdateClassroom}
+              <Form.Item
+                label="Tên lớp học"
+                name="classroom"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input your classroom name!',
+                  },
+                ]}
               >
-                Cập nhật thông tin
-              </Button>
-            </Form.Item>
-          </Form>
-          <h1>Thông tin về giảng viên: </h1>
-          <Descriptions bordered column={1} size="large">
-            <Descriptions.Item label="Fullname" span={1}>
-              <UserOutlined /> {detailClass?.teacher?.name}
-            </Descriptions.Item>
-            <Descriptions.Item label="Email">
-              <MailOutlined /> {detailClass?.teacher?.email}
-            </Descriptions.Item>
-            <Descriptions.Item label="Phone">
-              <PhoneOutlined /> {detailClass?.teacher?.phone}
-            </Descriptions.Item>
-          </Descriptions>
+                <Input size="large" placeholder="Enter classroom name" readOnly value={detailClass?.name} />
+              </Form.Item>
+
+              <Form.Item
+                label="Tên môn học"
+                name="subject"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input your subject name!',
+                  },
+                ]}
+              >
+                <Input size="large" placeholder="Enter subject name" readOnly />
+              </Form.Item>
+
+              <Form.Item
+                label="Số lượng học sinh"
+                name="maxStudent"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input your number of student!',
+                  },
+                ]}
+              >
+                <Input type="number" size="large" placeholder="Enter number of student" readOnly />
+              </Form.Item>
+
+              <Form.Item
+                label="Mô tả lớp học"
+                name="description"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input your classroom description!',
+                  },
+                ]}
+              >
+                <Input.TextArea
+                  size="large"
+                  placeholder="Enter classroom description"
+                  readOnly
+                  style={{ height: 150 }}
+                />
+              </Form.Item>
+
+              <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="user-profile-form-button"
+                  onClick={handleUpdateClassroom}
+                >
+                  Cập nhật thông tin
+                </Button>
+              </Form.Item>
+            </Form>
+            <h1>Thông tin về giảng viên: </h1>
+            <Descriptions bordered column={1} size="large">
+              <Descriptions.Item label="Fullname" span={1}>
+                <UserOutlined /> {detailClass?.teacher?.name}
+              </Descriptions.Item>
+              <Descriptions.Item label="Email">
+                <MailOutlined /> {detailClass?.teacher?.email}
+              </Descriptions.Item>
+              <Descriptions.Item label="Phone">
+                <PhoneOutlined /> {detailClass?.teacher?.phone}
+              </Descriptions.Item>
+            </Descriptions>
+          </div>
         </div>
       </Card>
     </>
   );
 }
+
+Content.propTypes = {
+  code: PropTypes.object.isRequired,
+  onCopy: PropTypes.func.isRequired,
+};
 
 export default ClassDetail;

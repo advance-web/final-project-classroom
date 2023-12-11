@@ -16,6 +16,9 @@ export default function SignIn() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // const [searchParams] = useSearchParams();
+  // const countinue = searchParams.get('countinue');
+
   const navigate = useNavigate();
 
   const onFinish = (values) => {
