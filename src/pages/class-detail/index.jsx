@@ -72,7 +72,7 @@ function ClassDetail() {
   const [detailClass, setDetailClass] = useState();
   const location = useLocation();
   const [code, setCode] = useState({
-    value: detailClass.joinCode,
+    value: '',
     copied: false,
   });
   console.log('Location: ', location);
@@ -93,10 +93,14 @@ function ClassDetail() {
       const dataRespond = await getDetailClassroomById(id);
       console.log(dataRespond);
       setDetailClass(dataRespond.data.data);
+      setCode((prevCode) => ({
+        ...prevCode,
+        value: dataRespond.data.data.joinCode,
+      }));
     };
 
     getDetailClassroom(idClass);
-  }, []);
+  }, [idClass]);
 
   console.log('Detail class: ', detailClass);
 
