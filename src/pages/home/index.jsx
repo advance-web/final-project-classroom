@@ -28,9 +28,9 @@ export default function Home() {
           <Title level={2}>Lớp học của tôi</Title>
           <Row gutter={[32, 32]} justify="center">
             {listClassrooms.map((classroom) => (
-              <Col style={{ marginTop: 16 }} key={classroom.classroom._id}>
-                <Link to={`/classroom/${classroom.classroom._id}`}>
-                  <CardClassroomInfo data={classroom.classroom} />
+              <Col style={{ marginTop: 16 }} key={classroom?.classroom?.id}>
+                <Link to={`/classroom/${classroom?.classroom?.id}`}>
+                  <CardClassroomInfo data={classroom?.classroom} />
                 </Link>
               </Col>
             ))}
