@@ -1,4 +1,5 @@
 import { Card, Typography } from 'antd';
+import PropTypes from 'prop-types';
 
 export default function CardClassroomInfo(props) {
   const data = props.data;
@@ -25,5 +26,5 @@ export default function CardClassroomInfo(props) {
 }
 
 CardClassroomInfo.propTypes = {
-  data: Object,
+  data: PropTypes.object,
 };
