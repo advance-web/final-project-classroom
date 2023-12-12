@@ -4,7 +4,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useLocation } from 'react-router-dom';
 import { MoreOutlined } from '@ant-design/icons';
 import { MailOutlined, PhoneOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Card, Descriptions, Form, Input, notification, Popover } from 'antd';
+import { Card, Descriptions, Form, Input, notification, Popover } from 'antd';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
@@ -117,7 +117,7 @@ function ClassDetail() {
   }
 
   return (
-    <>
+    <ClassDetailStyle>
       <SubMenu></SubMenu>
       <Card>
         <div
@@ -227,22 +227,22 @@ function ClassDetail() {
                 />
               </Form.Item>
             </Form>
-            <h1>Thông tin về giảng viên: </h1>
-            <Descriptions bordered column={1} size="large">
-              <Descriptions.Item label="Fullname" span={1}>
-                <UserOutlined /> {detailClass?.teacher?.name}
-              </Descriptions.Item>
-              <Descriptions.Item label="Email">
-                <MailOutlined /> {detailClass?.teacher?.email}
-              </Descriptions.Item>
-              <Descriptions.Item label="Phone">
-                <PhoneOutlined /> {detailClass?.teacher?.phone}
-              </Descriptions.Item>
-            </Descriptions>
           </div>
+          <h1>Thông tin về giảng viên: </h1>
+          <Descriptions bordered column={1} size="large">
+            <Descriptions.Item label="Fullname" span={1}>
+              <UserOutlined /> {detailClass?.teacher?.name}
+            </Descriptions.Item>
+            <Descriptions.Item label="Email">
+              <MailOutlined /> {detailClass?.teacher?.email}
+            </Descriptions.Item>
+            <Descriptions.Item label="Phone">
+              <PhoneOutlined /> {detailClass?.teacher?.phone}
+            </Descriptions.Item>
+          </Descriptions>
         </div>
       </Card>
-    </>
+    </ClassDetailStyle>
   );
 }
 
@@ -253,3 +253,59 @@ Content.propTypes = {
 };
 
 export default ClassDetail;
+
+const ClassDetailStyle = styled.div`
+  .bg-image {
+    background-image: url(/img/AnhNen.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 240px;
+    left: 0;
+    position: relative;
+    top: 0px;
+    width: 100%;
+    border-radius: 8px;
+    .course-name {
+      bottom: 0;
+      color: #fff;
+      left: 0;
+      padding: 1rem 1.5rem;
+      position: absolute;
+      right: 0;
+    }
+  }
+  .course-detail {
+    display: flex;
+    .course-join-code-part {
+      height: 6rem;
+      width: 14rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      border: 1px solid #ccc;
+      border-radius: 1rem;
+      .course-join-code-title {
+        margin: 0;
+      }
+      .course-join-code {
+        margin: 0;
+        font-size: 24px;
+        color: rgb(25, 103, 210);
+        fill: rgb(25, 103, 210);
+        font-weight: 500;
+      }
+      .icon {
+        font-size: 30px;
+        padding: 8px;
+        border-radius: 50%;
+        &:hover {
+          background-color: #ccc;
+        }
+      }
+    }
+    .user-profile-form {
+      max-width: 600;
+      margin-left: 8rem;
+    }
+  }
+`;
