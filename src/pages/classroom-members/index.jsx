@@ -8,7 +8,7 @@ import NotificationContext from '../../contexts/notification/notificationContext
 import { getClassroomParticipant } from '../../services/classroom';
 import { inviteClassroom } from '../../services/teacher';
 
-import InviteModal from './components/inviteModal';
+import InviteModal from './components/InviteModal';
 
 export default function ShowClassroomMembers() {
   const [classParticipants, setClassParticipants] = useState();
