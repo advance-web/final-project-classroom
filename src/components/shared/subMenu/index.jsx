@@ -7,7 +7,7 @@ function SubMenu() {
 
   const { pathname } = location;
 
-  const selectedKey = pathname.includes('participants') ? '2' : pathname.includes('scores') ? '3' : '1';
+  const selectedKey = pathname.includes('participants') ? '2' : pathname.includes('grade-structure') ? '3' : '1';
 
   return (
     <Menu
@@ -26,7 +26,7 @@ function SubMenu() {
         <Link to={`/classroom/${id}/participants`}>Mọi người</Link>
       </Menu.Item>
       <Menu.Item key="3">
-        <Link to="">Điểm</Link>
+        <Link to={`/classroom/${id}/grade-structure`}>Cấu trúc điểm</Link>
       </Menu.Item>
     </Menu>
   );
