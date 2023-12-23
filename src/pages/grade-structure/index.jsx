@@ -90,6 +90,11 @@ export default function GradeStructure() {
     }
   };
 
+  const handleDelete = (key) => {
+    const newData = data.filter((item) => item.key !== key);
+    setData(newData);
+  };
+
   const columns = [
     {
       title: 'Tên cột điểm',
@@ -100,13 +105,13 @@ export default function GradeStructure() {
     {
       title: 'Tỉ lệ',
       dataIndex: 'score',
-      width: '30%',
+      width: '20%',
       editable: true,
     },
     {
-      title: 'operation',
-      dataIndex: 'operation',
-      width: '30%',
+      title: 'Chỉnh sửa cột điểm',
+      dataIndex: 'edit-operation',
+      width: '20%',
       render: (_, record) => {
         const editable = isEditing(record);
         return editable ? (
@@ -129,6 +134,17 @@ export default function GradeStructure() {
           </Typography.Link>
         );
       },
+    },
+    {
+      title: 'Xóa cột điểm',
+      dataIndex: 'delete-operation',
+      width: '20%',
+      render: (_, record) =>
+        data.length >= 1 ? (
+          <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
+            <a>Delete</a>
+          </Popconfirm>
+        ) : null,
     },
   ];
 
