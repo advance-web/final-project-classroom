@@ -13,6 +13,7 @@ import AcceptToSentEmailResetPassword from './pages/accept-send-email';
 import ClassDetail from './pages/class-detail';
 import ShowClassroomMembers from './pages/classroom-members';
 import CreateClassroom from './pages/create-classroom';
+import GradeBoard from './pages/grade-board';
 import GradeStructure from './pages/grade-structure';
 import Home from './pages/home';
 import Landing from './pages/landing';
@@ -141,6 +142,7 @@ function App() {
           <Route path="/classroom/:id" element={<ClassDetail />} />
           <Route path="/classroom/:id/participants" element={<ShowClassroomMembers />} />
           <Route path="/classroom/:id/grade-structure" element={<GradeStructure />} />
+          <Route path="/classroom/:id/grade-board" element={<GradeBoard />} />
           <Route path="/classroom/invite/:classroomId" element={<AcceptJoinClass />} />
           <Route
             path="/create-classroom"

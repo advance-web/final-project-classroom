@@ -1,23 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Button, Form, Input, InputNumber, Popconfirm, Table, Typography } from 'antd';
 import PropTypes from 'prop-types';
 
 import SubMenu from '../../components/shared/subMenu';
+import { createGradeStructure, getAllGradeStructuresOfClassroom } from '../../services/grade';
 
 import CreateGradeCompositionModal from './components/create-grade-composition-modal';
-
-const originData = [
-  {
-    key: '1',
-    title: 'Giữa kì',
-    score: 50,
-  },
-  {
-    key: '2',
-    title: 'Cuối kì',
-    score: 50,
-  },
-];
 
 const EditableCell = ({ editing, dataIndex, title, inputType, children, ...restProps }) => {
   const inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
@@ -47,20 +36,33 @@ const EditableCell = ({ editing, dataIndex, title, inputType, children, ...restP
 
 export default function GradeStructure() {
   const [form] = Form.useForm();
-  const [data, setData] = useState(originData);
+  const [data, setData] = useState([]);
   const [editingKey, setEditingKey] = useState('');
   const [createGradeComposition, setCreateGradeComposition] = useState(false);
   const [gradeCompositionName, setGradeCompositionName] = useState('');
   const [scale, setScale] = useState();
+  const location = useLocation();
 
-  const isEditing = (record) => record.key === editingKey;
+  const idClass = location.pathname.split('/')[2];
+  console.log('ID Class: ', idClass);
+
+  useEffect(() => {
+    const getAllGradeStructures = async (idClass) => {
+      const dataRespond = await getAllGradeStructuresOfClassroom(idClass);
+      console.log('Data respond: ', dataRespond);
+      setData(dataRespond.data.data);
+    };
+    getAllGradeStructures(idClass);
+  }, []);
+
+  const isEditing = (record) => record._id === editingKey;
 
   const edit = (record) => {
     form.setFieldsValue({
       score: '',
       ...record,
     });
-    setEditingKey(record.key);
+    setEditingKey(record._id);
   };
 
   const cancel = () => {
@@ -71,13 +73,17 @@ export default function GradeStructure() {
     try {
       const row = await form.validateFields();
       const newData = [...data];
-      const index = newData.findIndex((item) => key === item.key);
+      const index = newData.findIndex((item) => key === item._id);
       if (index > -1) {
         const item = newData[index];
         newData.splice(index, 1, {
           ...item,
           ...row,
         });
+
+        //const updatedDataRes = await createGradeStructure(idClass, row);
+        //console.log(updatedDataRes);
+
         setData(newData);
         setEditingKey('');
       } else {
@@ -91,20 +97,20 @@ export default function GradeStructure() {
   };
 
   const handleDelete = (key) => {
-    const newData = data.filter((item) => item.key !== key);
+    const newData = data.filter((item) => item._id !== key);
     setData(newData);
   };
 
   const columns = [
     {
       title: 'Tên cột điểm',
-      dataIndex: 'title',
+      dataIndex: 'name',
       width: '40%',
       editable: true,
     },
     {
       title: 'Tỉ lệ',
-      dataIndex: 'score',
+      dataIndex: 'scale',
       width: '20%',
       editable: true,
     },
@@ -117,7 +123,7 @@ export default function GradeStructure() {
         return editable ? (
           <span>
             <Typography.Link
-              onClick={() => save(record.key)}
+              onClick={() => save(record._id)}
               style={{
                 marginRight: 8,
               }}
@@ -141,7 +147,7 @@ export default function GradeStructure() {
       width: '20%',
       render: (_, record) =>
         data.length >= 1 ? (
-          <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
+          <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record._id)}>
             <a>Delete</a>
           </Popconfirm>
         ) : null,
@@ -156,7 +162,7 @@ export default function GradeStructure() {
       ...col,
       onCell: (record) => ({
         record,
-        inputType: col.dataIndex === 'score' ? 'number' : 'text',
+        inputType: col.dataIndex === 'scale' ? 'number' : 'text',
         dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),
@@ -166,16 +172,18 @@ export default function GradeStructure() {
 
   const handleCreateGradeComposition = async () => {
     try {
-      //to do
-      setData([
-        ...data,
-        {
-          key: '3',
-          title: gradeCompositionName,
-          score: scale,
-        },
-      ]);
-      console.log('Create grade composition: ' + gradeCompositionName + ' ' + scale);
+      const dataCallAPI = {
+        name: gradeCompositionName,
+        scale: scale,
+      };
+      console.log('Create grade composition: ', dataCallAPI);
+      const dataRespond = await createGradeStructure(idClass, dataCallAPI);
+      console.log(dataRespond);
+
+      if (dataRespond.data.status === 'success') {
+        const resetData = await getAllGradeStructuresOfClassroom(idClass);
+        setData(resetData.data.data);
+      }
     } catch (err) {
       console.log(err);
     }

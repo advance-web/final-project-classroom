@@ -1,13 +1,7 @@
 import { Form, Input, InputNumber, Modal } from 'antd';
 import PropTypes from 'prop-types';
 
-const CreateGradeCompositionModal = ({
-  open,
-  onCancel,
-  onOk,
-  onInputGradeCompositionNameChange,
-  onInputScaleChange,
-}) => {
+function CreateGradeCompositionModal({ open, onCancel, onOk, onInputGradeCompositionNameChange, onInputScaleChange }) {
   return (
     <Modal title="Thêm cột điểm thành phần" open={open} onCancel={onCancel} onOk={onOk}>
       <Form
@@ -45,7 +39,7 @@ const CreateGradeCompositionModal = ({
       </Form>
     </Modal>
   );
-};
+}
 
 CreateGradeCompositionModal.propTypes = {
   open: PropTypes.bool,
