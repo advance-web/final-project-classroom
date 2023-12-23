@@ -23,6 +23,7 @@ import LoginSuccess from './pages/notification/login-success';
 import ResetPassword from './pages/reset-password';
 import SignIn from './pages/sign-in';
 import SignUp from './pages/sign-up';
+import StudentViewGrade from './pages/studen-view-grade';
 import SuccessPage from './pages/successPage';
 import UserProfile from './pages/user-profile';
 import { getMe } from './services/auth';
@@ -178,6 +179,8 @@ function App() {
           <Route path="/classroom/:id/grade-board" element={<GradeBoard />} />
           <Route path="/classroom/:id/grade-review" element={<GradeReview />} />
           <Route path="/classroom/invite/:classroomId" element={<AcceptJoinClass />} />
+
+          <Route path="/student/:id/:classroomId" element={<StudentViewGrade />} />
           <Route
             path="/create-classroom"
             element={
