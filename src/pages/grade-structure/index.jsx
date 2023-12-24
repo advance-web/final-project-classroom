@@ -4,7 +4,12 @@ import { Button, Form, Input, InputNumber, Popconfirm, Table, Typography } from 
 import PropTypes from 'prop-types';
 
 import SubMenu from '../../components/shared/subMenu';
-import { createGradeStructure, getAllGradeStructuresOfClassroom } from '../../services/grade';
+import {
+  createGradeStructure,
+  deleteGradeStructureOfClassroom,
+  getAllGradeStructuresOfClassroom,
+  updateGradeStructureOfClassroom,
+} from '../../services/grade';
 
 import CreateGradeCompositionModal from './components/create-grade-composition-modal';
 
@@ -81,10 +86,12 @@ export default function GradeStructure() {
           ...row,
         });
 
-        //const updatedDataRes = await createGradeStructure(idClass, row);
-        //console.log(updatedDataRes);
+        const updatedDataRes = await updateGradeStructureOfClassroom(key, row);
+        console.log('Update grade structure: ', updatedDataRes);
 
-        setData(newData);
+        if (updatedDataRes.data.status == 'success') {
+          setData(newData);
+        }
         setEditingKey('');
       } else {
         newData.push(row);
@@ -96,8 +103,11 @@ export default function GradeStructure() {
     }
   };
 
-  const handleDelete = (key) => {
+  const handleDelete = async (key) => {
     const newData = data.filter((item) => item._id !== key);
+
+    const deleteDataRes = await deleteGradeStructureOfClassroom(key);
+    console.log('Delete grade structure: ', deleteDataRes);
     setData(newData);
   };
 
