@@ -7,7 +7,27 @@ function SubMenu() {
 
   const { pathname } = location;
 
-  const selectedKey = pathname.includes('participants') ? '2' : pathname.includes('scores') ? '3' : '1';
+  //const selectedKey = pathname.includes('participants') ? '2' : pathname.includes('grade-structure') ? '3' : '1';
+  var selectedKey;
+
+  switch (true) {
+    case pathname.includes('participants'):
+      selectedKey = '2';
+      break;
+    case pathname.includes('grade-structure'):
+      selectedKey = '3';
+      break;
+    case pathname.includes('grade-board'):
+      selectedKey = '4';
+      break;
+    case pathname.includes('grade-review'):
+      selectedKey = '5';
+      break;
+    default:
+      selectedKey = '1';
+  }
+
+  console.log('selected key: ', selectedKey);
 
   return (
     <Menu
@@ -26,7 +46,13 @@ function SubMenu() {
         <Link to={`/classroom/${id}/participants`}>Mọi người</Link>
       </Menu.Item>
       <Menu.Item key="3">
-        <Link to="">Điểm</Link>
+        <Link to={`/classroom/${id}/grade-structure`}>Cấu trúc điểm</Link>
+      </Menu.Item>
+      <Menu.Item key="4">
+        <Link to={`/classroom/${id}/grade-board`}>Bảng điểm</Link>
+      </Menu.Item>
+      <Menu.Item key="5">
+        <Link to={`/classroom/${id}/grade-review`}>Phúc khảo</Link>
       </Menu.Item>
     </Menu>
   );

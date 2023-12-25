@@ -13,6 +13,9 @@ import AcceptToSentEmailResetPassword from './pages/accept-send-email';
 import ClassDetail from './pages/class-detail';
 import ShowClassroomMembers from './pages/classroom-members';
 import CreateClassroom from './pages/create-classroom';
+import GradeBoard from './pages/grade-board';
+import GradeReview from './pages/grade-review';
+import GradeStructure from './pages/grade-structure';
 import Home from './pages/home';
 import Landing from './pages/landing';
 import LoginSuccess from './pages/notification/login-success';
@@ -139,6 +142,9 @@ function App() {
           <Route path="/login-success/:token" element={<LoginSuccess />} />
           <Route path="/classroom/:id" element={<ClassDetail />} />
           <Route path="/classroom/:id/participants" element={<ShowClassroomMembers />} />
+          <Route path="/classroom/:id/grade-structure" element={<GradeStructure />} />
+          <Route path="/classroom/:id/grade-board" element={<GradeBoard />} />
+          <Route path="/classroom/:id/grade-review" element={<GradeReview />} />
           <Route path="/classroom/invite/:classroomId" element={<AcceptJoinClass />} />
           <Route
             path="/create-classroom"
@@ -150,7 +156,6 @@ function App() {
           />
         </Route>
 
-        
         <Route path="/verify" element={<SuccessPage />} />
       </Routes>
     </>
