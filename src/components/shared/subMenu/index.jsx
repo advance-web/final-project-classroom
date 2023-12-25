@@ -23,6 +23,9 @@ function SubMenu() {
     case pathname.includes('grade-review'):
       selectedKey = '5';
       break;
+    case pathname.includes('studentGrade'):
+      selectedKey = '6';
+      break;
     default:
       selectedKey = '1';
   }
@@ -53,6 +56,9 @@ function SubMenu() {
       </Menu.Item>
       <Menu.Item key="5">
         <Link to={`/classroom/${id}/grade-review`}>Phúc khảo</Link>
+      </Menu.Item>
+      <Menu.Item key="6">
+        <Link to={`/classroom/${id}/studentGrade`}>Điểm</Link>
       </Menu.Item>
     </Menu>
   );

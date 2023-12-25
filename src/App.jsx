@@ -21,6 +21,7 @@ import Home from './pages/home';
 import Landing from './pages/landing';
 import LoginSuccess from './pages/notification/login-success';
 import ResetPassword from './pages/reset-password';
+import ReviewComment from './pages/review-comment';
 import SignIn from './pages/sign-in';
 import SignUp from './pages/sign-up';
 import StudentViewGrade from './pages/studen-view-grade';
@@ -180,7 +181,8 @@ function App() {
           <Route path="/classroom/:id/grade-review" element={<GradeReview />} />
           <Route path="/classroom/invite/:classroomId" element={<AcceptJoinClass />} />
 
-          <Route path="/student/:id/:classroomId" element={<StudentViewGrade />} />
+          <Route path="/classroom/:id/studentGrade" element={<StudentViewGrade />} />
+          <Route path="/gradeReview/:reviewId" element={<ReviewComment />} />
           <Route
             path="/create-classroom"
             element={
