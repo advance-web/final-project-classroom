@@ -1,9 +1,9 @@
-import { useContext } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useContext, useEffect } from 'react';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Button, Card } from 'antd';
 
 import NotificationContext from '../../contexts/notification/notificationContext';
-import { inviteToClassroom } from '../../services/classroom';
+import { checkJoinedClassroom, inviteToClassroom } from '../../services/classroom';
 
 function AcceptJoinClass() {
   const { classroomId } = useParams();
@@ -13,15 +13,30 @@ function AcceptJoinClass() {
 
   const { openNotification } = useContext(NotificationContext);
 
+  const navigate = useNavigate();
   const handleJoinClass = async () => {
     try {
       await inviteToClassroom(classroomId, joinCode);
       openNotification({ type: 'success', title: 'Tham gia lớp học', description: 'Tham gia lớp học thành công' });
+      navigate(`/classroom/${classroomId}`);
     } catch (err) {
-      console.log(err);
+      openNotification({ type: 'error', title: 'Tham gia lớp học', description: 'Tham gia lớp học thất bại' });
     }
   };
 
+  useEffect(() => {
+    const verifyJoinedClassroom = async () => {
+      try {
+        const { data: response } = await checkJoinedClassroom(classroomId);
+        if (response.data.joined) {
+          navigate(`/classroom/${classroomId}`);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    verifyJoinedClassroom();
+  }, [classroomId, navigate, openNotification]);
   return (
     <div>
       <Card style={{ width: '48rem', margin: 'auto' }}>

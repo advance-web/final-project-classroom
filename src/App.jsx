@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { createGlobalStyle } from 'styled-components';
 
@@ -8,6 +8,7 @@ import AuthContext from './contexts/auth/auth-context';
 import NotificationContext from './contexts/notification/notificationContext';
 import NotificationPopupProvider from './contexts/notification-popup/notification-popup-provider';
 import useAuth from './hooks/useAuth';
+import { getRedirect } from './libs/utils/localStorage';
 import AcceptJoinClass from './pages/accept-join-class';
 import AcceptToSentEmailResetPassword from './pages/accept-send-email';
 import ClassDetail from './pages/class-detail';
@@ -26,9 +27,11 @@ import SuccessPage from './pages/successPage';
 import UserProfile from './pages/user-profile';
 import { getMe } from './services/auth';
 
-const ProtectedRoute = ({ user, children }) => {
-  if (!user) {
-    return <Navigate to="/" replace />;
+const ProtectedRoute = ({ children }) => {
+  const { user, userLoaded } = useAuth();
+  const location = useLocation();
+  if (!user && userLoaded) {
+    return <Navigate to="/sign-in" replace state={{ redirect: location }} />;
   }
   return children;
 };
@@ -38,9 +41,12 @@ ProtectedRoute.propTypes = {
   children: PropTypes.node,
 };
 
-const AuthRoute = ({ user, children }) => {
+const AuthRoute = ({ children }) => {
+  const { user } = useAuth();
   if (user) {
-    return <Navigate to="/" replace />;
+    const redirect = getRedirect();
+    console.log(redirect);
+    return <Navigate to={redirect ? redirect : '/'} replace />;
   }
   return children;
 };
@@ -70,19 +76,21 @@ RestrictedRoute.propTypes = {
 };
 
 function App() {
-  const { user, setUser } = React.useContext(AuthContext);
+  const { setUser, setLoaded } = React.useContext(AuthContext);
   useEffect(() => {
     const initUserData = async () => {
       try {
         const response = await getMe();
         const userData = response.data.data;
         setUser(userData);
+        setLoaded(true);
       } catch (err) {
+        setLoaded(true);
         console.log('Not logged in');
       }
     };
     initUserData();
-  }, [setUser]);
+  }, [setUser, setLoaded]);
   return (
     <>
       <GlobalStyle />
@@ -93,7 +101,7 @@ function App() {
           <Route
             path="/home"
             element={
-              <ProtectedRoute user={user}>
+              <ProtectedRoute>
                 <Home />
               </ProtectedRoute>
             }
@@ -101,7 +109,7 @@ function App() {
           <Route
             path="/user-profile"
             element={
-              <ProtectedRoute user={user}>
+              <ProtectedRoute>
                 <UserProfile />
               </ProtectedRoute>
             }
@@ -109,7 +117,7 @@ function App() {
           <Route
             path="/sign-in"
             element={
-              <AuthRoute user={user}>
+              <AuthRoute>
                 <SignIn />
               </AuthRoute>
             }
@@ -117,7 +125,7 @@ function App() {
           <Route
             path="/sign-up"
             element={
-              <AuthRoute user={user}>
+              <AuthRoute>
                 <SignUp />
               </AuthRoute>
             }
@@ -125,21 +133,45 @@ function App() {
           <Route
             path="/reset-password"
             element={
-              <AuthRoute user={user}>
+              <ProtectedRoute>
                 <ResetPassword />
-              </AuthRoute>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/accept-send-email"
             element={
-              <AuthRoute user={user}>
+              <ProtectedRoute>
                 <AcceptToSentEmailResetPassword />
-              </AuthRoute>
+              </ProtectedRoute>
             }
           />
 
           <Route path="/login-success/:token" element={<LoginSuccess />} />
+          <Route
+            path="/classroom/:id"
+            element={
+              <ProtectedRoute>
+                <ClassDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/classroom/:id/participants"
+            element={
+              <ProtectedRoute>
+                <ShowClassroomMembers />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/classroom/invite/:classroomId"
+            element={
+              <ProtectedRoute>
+                <AcceptJoinClass />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/classroom/:id" element={<ClassDetail />} />
           <Route path="/classroom/:id/participants" element={<ShowClassroomMembers />} />
           <Route path="/classroom/:id/grade-structure" element={<GradeStructure />} />
@@ -149,9 +181,13 @@ function App() {
           <Route
             path="/create-classroom"
             element={
-              <CreateClassroom>
-                <NotificationPopupProvider></NotificationPopupProvider>
-              </CreateClassroom>
+              <ProtectedRoute>
+                <RestrictedRoute role="teacher">
+                  <CreateClassroom>
+                    <NotificationPopupProvider></NotificationPopupProvider>
+                  </CreateClassroom>
+                </RestrictedRoute>
+              </ProtectedRoute>
             }
           />
         </Route>

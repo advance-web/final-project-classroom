@@ -5,6 +5,7 @@ import { Avatar, Button, List } from 'antd';
 
 import SubMenu from '../../components/shared/subMenu';
 import NotificationContext from '../../contexts/notification/notificationContext';
+import useAuth from '../../hooks/useAuth';
 import { getClassroomParticipant } from '../../services/classroom';
 import { inviteClassroom } from '../../services/teacher';
 
@@ -15,12 +16,11 @@ export default function ShowClassroomMembers() {
   const [openInviteModal, setOpenInviteModal] = useState(false);
   const [email, setEmail] = useState('');
   const { openNotification } = useContext(NotificationContext);
+  const { isTeacher } = useAuth();
 
   const location = useLocation();
-  console.log('Location: ', location);
 
   const idClass = location.pathname.split('/')[2];
-  console.log('ID Class: ', idClass);
 
   useEffect(() => {
     const getClassParticipants = async (id) => {
@@ -32,12 +32,8 @@ export default function ShowClassroomMembers() {
     getClassParticipants(idClass);
   }, [idClass]);
 
-  console.log('Detail class: ', classParticipants);
   const listTeachers = classParticipants?.filter((item) => item.role === 'teacher') || [];
   const listStudents = classParticipants?.filter((item) => item.role === 'student') || [];
-
-  console.log('List teachers: ', listTeachers);
-  console.log('List students: ', listStudents);
 
   const handleInviteByEmail = async () => {
     try {
@@ -59,7 +55,7 @@ export default function ShowClassroomMembers() {
     <div>
       <SubMenu></SubMenu>
       <div>
-        <Button onClick={() => setOpenInviteModal(true)}>+ Thêm thành viên mới</Button>
+        {isTeacher && <Button onClick={() => setOpenInviteModal(true)}>+ Thêm thành viên mới</Button>}
         <InviteModal
           open={openInviteModal}
           onCancel={() => setOpenInviteModal(false)}

@@ -7,6 +7,7 @@ const LOG_OUT_ENDPOINT = '/users/logout';
 const UDPATE_PROFILE_ENDPOINT = '/users/me';
 const FACEBOOK_LOGIN_ENDPOINT = '/auth/login/facebook';
 const ACCEPT_SEND_EMAIL_ENDPOINT = '/users/accept-send-email';
+const SEND_VERIFY_EMAIL = '/users/send-verification-email';
 
 export const signIn = (data) => {
   return request.post(SIGN_IN_ENDPOINT, data);
@@ -43,4 +44,8 @@ export const resetPassword = (verifyToken, data) => {
 
 export const verify = (verifyToken) => {
   return request.get(`/users/verify?token=${verifyToken}`);
+};
+
+export const sendVerifyEmail = () => {
+  return request.get(SEND_VERIFY_EMAIL);
 };
