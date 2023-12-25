@@ -5,6 +5,7 @@ const GET_ALL_GRADE_STRUCTURES_ENDPOINT = (idClass) => `/classroom/${idClass}/st
 const UPDATE_GRADE_STRUCTURES_ENDPOINT = (idComposition) => `/structureGrade/${idComposition}`;
 const DELETE_GRADE_STRUCTURES_ENDPOINT = (idComposition) => `/structureGrade/${idComposition}`;
 const GET_ALL_GRADE_STUDENTS_ENDPOINT = (idClass) => `/classroom/${idClass}/studentGrade`;
+const GET_ALL_GRADE_REVIEW_ENDPOINT = (idClass) => `/classroom/${idClass}/gradeReview`;
 
 export const createGradeStructure = (idClass, data) => {
   return request.post(CREATE_GRADE_STRUCTURE_ENDPOINT + idClass, data);
@@ -24,4 +25,8 @@ export const updateGradeStructureOfClassroom = (idComposition, data) => {
 
 export const deleteGradeStructureOfClassroom = (idComposition) => {
   return request.delete(DELETE_GRADE_STRUCTURES_ENDPOINT(idComposition));
+};
+
+export const getAllGradeReviewsOfClassroom = (idClass) => {
+  return request.get(GET_ALL_GRADE_REVIEW_ENDPOINT(idClass));
 };

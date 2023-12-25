@@ -137,7 +137,7 @@ function GradeBoard() {
       setDataSource(transformedData);
     };
     getAllGradeStudents(idClass);
-  }, []);
+  }, [idClass, listGradeComposition]);
 
   const defaultColumns = [
     {
