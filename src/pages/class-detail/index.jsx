@@ -75,7 +75,6 @@ function ClassDetail() {
     value: '',
     copied: false,
   });
-  console.log('Location: ', location);
   const [form] = Form.useForm();
 
   const onFinish = (values) => {
@@ -83,12 +82,10 @@ function ClassDetail() {
   };
 
   const idClass = location.pathname.split('/').pop();
-  console.log('ID Class: ', idClass);
 
   useEffect(() => {
     const getDetailClassroom = async (id) => {
       const dataRespond = await getDetailClassroomById(id);
-      console.log(dataRespond);
       setDetailClass(dataRespond.data.data);
       setCode((prevCode) => ({
         ...prevCode,
@@ -106,10 +103,7 @@ function ClassDetail() {
     getDetailClassroom(idClass);
   }, [idClass, form]);
 
-  console.log('Detail class: ', detailClass);
-
   function handleOnCopy() {
-    console.log('Copying...');
     setCode((prevCode) => ({
       ...prevCode,
       copied: true,

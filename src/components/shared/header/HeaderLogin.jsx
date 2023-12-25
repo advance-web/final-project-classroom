@@ -11,14 +11,36 @@ import {
 import { Button, Card, Flex, Layout, Menu } from 'antd';
 
 import AuthContext from '../../../contexts/auth/auth-context';
-import { logOut } from '../../../services/auth';
+import NotificationContext from '../../../contexts/notification/notificationContext';
+import useAuth from '../../../hooks/useAuth';
+import { logOut, sendVerifyEmail } from '../../../services/auth';
 import VerifyStatus from '../../VerifyStatus';
 
 const { Header, Sider, Content } = Layout;
 
 const HeaderLogin = () => {
-  const { user, setUser } = useContext(AuthContext);
+  const { setUser } = useContext(AuthContext);
+  const { user, isTeacher } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
+  const { openNotification } = useContext(NotificationContext);
+
+  const handleSendVerifyEmail = async () => {
+    try {
+      await sendVerifyEmail();
+      openNotification({
+        type: 'success',
+        title: 'Kích hoạt tài khoản',
+        description: 'Đã gửi email kích hoạt tài khoản',
+      });
+    } catch (err) {
+      console.log(err);
+      openNotification({
+        type: 'error',
+        title: 'Kích hoạt tài khoản',
+        description: 'Gửi email kích hoạt tài khoản thất bại',
+      });
+    }
+  };
 
   return (
     <Layout
@@ -91,8 +113,10 @@ const HeaderLogin = () => {
             onClick={(e) => e.preventDefault()}
           >
             <Flex align="center" gap={4}>
-              <span>Xin chào {user.name}</span>
-              <VerifyStatus verify={user.verify} />
+              <span>
+                Xin chào, {user.role === 'student' ? 'Học viên' : 'Giáo viên'} {user.name}
+              </span>
+              <VerifyStatus verify={user.verify} onSendVerifyEmail={handleSendVerifyEmail} />
             </Flex>
           </Menu.Item>
           <Menu.Item key="3" onClick={(e) => e.preventDefault()}>
@@ -135,9 +159,11 @@ const HeaderLogin = () => {
               <Menu.Item key="5" icon={<UploadOutlined />}>
                 <Link to="/user-profile">Thông tin cá nhân</Link>
               </Menu.Item>
-              <Menu.Item key="6" icon={<PlusCircleOutlined />}>
-                <Link to="/create-classroom">Tạo lớp học</Link>
-              </Menu.Item>
+              {isTeacher && (
+                <Menu.Item key="6" icon={<PlusCircleOutlined />}>
+                  <Link to="/create-classroom">Tạo lớp học</Link>
+                </Menu.Item>
+              )}
             </Menu>
           </Sider>
           <Card

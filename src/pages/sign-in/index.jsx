@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FacebookOutlined, GoogleOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Flex, Form, Input, Typography } from 'antd';
 
@@ -15,7 +15,7 @@ export default function SignIn() {
   const { setUser } = useContext(AuthContext);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  const { state: locationState } = useLocation();
   // const [searchParams] = useSearchParams();
   // const countinue = searchParams.get('countinue');
 
@@ -52,7 +52,11 @@ export default function SignIn() {
       if (dataUser.status == 'success') {
         setUser(userSignin);
         setJwt(token);
-        navigate('/home');
+        if (locationState.redirect) {
+          navigate(locationState.redirect);
+        } else {
+          navigate('/home');
+        }
       }
 
       form.submit();

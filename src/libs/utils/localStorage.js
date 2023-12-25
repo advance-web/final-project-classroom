@@ -5,3 +5,14 @@ export const getJwt = () => {
 export const setJwt = (token) => {
   localStorage.setItem('jwt', token);
 };
+
+export const setRedirect = (url) => {
+  localStorage.setItem('redirect', url);
+};
+export const getRedirect = () => {
+  localStorage.getItem('redirect');
+};
+
+export const removeRedirect = () => {
+  localStorage.removeItem('redirect');
+};
