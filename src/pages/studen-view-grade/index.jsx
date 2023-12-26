@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-// import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-// import { CKEditor } from '@ckeditor/ckeditor5-react';
 import { Button, Form, Input, Modal, Table } from 'antd';
+import TextArea from 'antd/es/input/TextArea';
 
 import SubMenu from '../../components/shared/subMenu';
-import { getStudentGrade } from '../../services/classroom';
+import { getStudentGrade, postGradeReview } from '../../services/classroom';
 
 function StudentViewGrade() {
-  const [studenGrade, setStudenGrade] = useState();
+  const [studentGrade, setStudentGrade] = useState();
+  const [modaldata, setmodaldata] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const location = useLocation();
   console.log('Location: ', location);
 
@@ -18,18 +20,17 @@ function StudentViewGrade() {
   useEffect(() => {
     const studentGrade = async (id) => {
       const dataRespond = await getStudentGrade(id);
-      console.log('Data respond', dataRespond);
-      setStudenGrade(dataRespond.data.data);
+      console.log('Student grade Data respond', dataRespond);
+      setStudentGrade(dataRespond.data.data);
     };
 
     studentGrade(idClass);
   }, [idClass]);
 
-  console.log('Student Grade: ', studenGrade);
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const showModal = () => {
+  console.log('Student Grade: ', studentGrade);
+  const showModal = (record) => {
+    console.log('Record: ', record);
+    setmodaldata(record);
     setIsModalOpen(true);
   };
 
@@ -40,9 +41,44 @@ function StudentViewGrade() {
     setIsModalOpen(false);
   };
 
-  const onFinish = (values) => {
+  const [form] = Form.useForm();
+
+  const onFinish = async (values) => {
     console.log('Success:', values);
   };
+
+  const handleSubmit = async () => {
+    try {
+      const data = form.getFieldValue();
+      console.log('Form data: ', data);
+      const dataCallAPI = {
+        studentGrade: data.studentGrade,
+        expectationGrade: data.expectationGrade,
+        reason: data.reason,
+      };
+      console.log('Đơn phúc khảo: ', dataCallAPI);
+      // setError(null);
+      //setLoading(true)
+      const dataReturn = await postGradeReview(dataCallAPI);
+      //setLoading(false)
+      console.log('API Response: ', dataReturn);
+
+      const dataUser = dataReturn.data.data;
+      const status = dataReturn.data.status;
+
+      console.log('Status: ', status);
+      console.log('ReviewForm Resonse: ', dataUser);
+
+      if (status == 'success') {
+        console.log('Gửi đơn phúc khảo thành công');
+      }
+      // form.submit();
+    } catch (error) {
+      console.log('Cập nhật không thành công');
+      //setLoading(false)
+    }
+  };
+
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
   };
@@ -67,39 +103,30 @@ function StudentViewGrade() {
       title: '',
       dataIndex: '',
       key: 'x',
-      render: () => {
+      render: (record) => {
         return (
           <>
-            <Button onClick={showModal}>Phúc khảo</Button>
+            <Button onClick={() => showModal(record)}>Phúc khảo</Button>
           </>
         );
       },
     },
   ];
 
+  let row =
+    studentGrade?.grades.map((grade) => {
+      return {
+        scoreId: grade._id,
+        scorePart: grade.structureGrade.name,
+        percentScore: grade.structureGrade.scale,
+        score: grade.grade,
+      };
+    }) ?? [];
   const data = [
+    ...row,
     {
-      key: '1',
-      scorePart: 'Bài tập cá nhân',
-      percentScore: 30,
-      score: 50,
-    },
-    {
-      key: '2',
-      scorePart: 'Giữa kì',
-      percentScore: 30,
-      score: 75,
-    },
-    {
-      key: '3',
-      scorePart: 'Cuối kì',
-      percentScore: 40,
-      score: 85,
-    },
-    {
-      key: '4',
       scorePart: 'Tổng điểm',
-      score: 85,
+      score: studentGrade?.total,
     },
   ];
 
@@ -107,8 +134,10 @@ function StudentViewGrade() {
     <>
       <SubMenu />
       <Table bordered pagination={false} columns={columns} dataSource={data} />
-      <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+      <Modal title="Đơn phúc khảo" open={isModalOpen} onOk={handleOk} onCancel={handleCancel} footer={null}>
         <Form
+          form={form}
+          initialValues={{ scorePart: modaldata.scorePart, score: modaldata.score, studentGrade: modaldata.scoreId }}
           name="basic"
           labelCol={{
             span: 8,
@@ -119,72 +148,33 @@ function StudentViewGrade() {
           style={{
             maxWidth: 600,
           }}
-          initialValues={{
-            remember: true,
-          }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
-          {/* <Form.Item
-            label="Họ tên"
-            name="username"
-            rules={[
-              {
-                required: true,
-                message: 'Please input your username!',
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            label="MSSV"
-            name="password"
-            rules={[
-              {
-                required: true,
-                message: 'Please input your password!',
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item> */}
-
           <Form.Item
             label="Cột điểm phúc khảo"
-            name="password"
+            name="scorePart"
             rules={[
               {
-                required: true,
-                message: 'Please input your password!',
+                message: 'Please input your cột điểm!',
               },
             ]}
           >
-            <Input />
+            <Input disabled />
           </Form.Item>
 
-          <Form.Item
-            label="Điểm hiện tại"
-            name="password"
-            rules={[
-              {
-                required: true,
-                message: 'Please input your password!',
-              },
-            ]}
-          >
-            <Input />
+          <Form.Item label="Điểm hiện tại" name="score">
+            <Input disabled />
           </Form.Item>
 
           <Form.Item
             label="Điểm kì vọng"
-            name="password"
+            name="expectationGrade"
             rules={[
               {
                 required: true,
-                message: 'Please input your password!',
+                message: 'Please input your expectation grade!',
               },
             ]}
           >
@@ -193,15 +183,15 @@ function StudentViewGrade() {
 
           <Form.Item
             label="Lí do"
-            name="password"
+            name="reason"
             rules={[
               {
                 required: true,
-                message: 'Please input your password!',
+                message: 'Please input your reason!',
               },
             ]}
           >
-            <Input />
+            <TextArea />
           </Form.Item>
 
           <Form.Item
@@ -210,7 +200,7 @@ function StudentViewGrade() {
               span: 16,
             }}
           >
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" onClick={handleSubmit}>
               Submit
             </Button>
           </Form.Item>

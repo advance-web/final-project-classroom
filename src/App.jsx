@@ -182,7 +182,7 @@ function App() {
           <Route path="/classroom/invite/:classroomId" element={<AcceptJoinClass />} />
 
           <Route path="/classroom/:id/studentGrade" element={<StudentViewGrade />} />
-          <Route path="/gradeReview/:reviewId" element={<ReviewComment />} />
+          <Route path="/classroom/:id/gradeReview/:reviewId" element={<ReviewComment />} />
           <Route
             path="/create-classroom"
             element={
