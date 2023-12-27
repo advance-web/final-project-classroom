@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { Form, Input, Table } from 'antd';
 import PropTypes from 'prop-types';
 
+import ExcelExportButton from '../../components/shared/exportToExcel';
 import SubMenu from '../../components/shared/subMenu';
 import { getAllGradeStructuresOfClassroom, getAllGradeStudentsOfClassroom } from '../../services/grade';
 
@@ -182,6 +183,7 @@ function GradeBoard() {
   return (
     <div>
       <SubMenu></SubMenu>
+      <ExcelExportButton data={dataSource} fileName="UserData" sheetName="UserSheet" />
       <Table
         components={components}
         rowClassName={() => 'editable-row'}
@@ -203,4 +205,9 @@ EditableCell.propTypes = {
   record: PropTypes.object,
   handleSave: PropTypes.func,
   restProps: PropTypes.object,
+};
+
+EditableRow.propTypes = {
+  index: PropTypes.string,
+  props: PropTypes.object,
 };
