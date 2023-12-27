@@ -7,50 +7,34 @@ import { getAllGradeReviewsOfClassroom } from '../../services/grade';
 
 const columns = [
   {
-    title: 'Name',
-    dataIndex: 'name',
+    title: 'Sinh viên phúc khảo',
+    dataIndex: 'studentName',
+    width: '20%',
+  },
+  {
+    title: 'Cột điểm phúc khảo',
+    dataIndex: 'structureGrade',
+  },
+  {
+    title: 'Điểm hiện tại',
+    dataIndex: 'currentGrade',
+  },
+  {
+    title: 'Điểm mong đợi',
+    dataIndex: 'expectationGrade',
+  },
+  {
+    title: 'Lý do',
+    dataIndex: 'reason',
     width: '30%',
   },
   {
-    title: 'Age',
-    dataIndex: 'age',
-  },
-  {
-    title: 'Address',
-    dataIndex: 'address',
-    width: '20%',
-  },
-  {
     title: 'Chi tiết phúc khảo',
-    dataIndex: 'review',
-    width: '20%',
-    render: () => <Link to="">Chi tiết</Link>,
-  },
-];
-const data = [
-  {
-    key: '1',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-  },
-  {
-    key: '2',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-  },
-  {
-    key: '3',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sydney No. 1 Lake Park',
-  },
-  {
-    key: '4',
-    name: 'Jim Red',
-    age: 32,
-    address: 'London No. 2 Lake Park',
+    dataIndex: 'detailReview',
+    render: (_, record) => {
+      const idClass = location.pathname.split('/')[2];
+      return <Link to={`/classroom/${idClass}/grade-review/${record.id}`}>Chi tiết</Link>;
+    },
   },
 ];
 
@@ -64,8 +48,18 @@ export default function GradeReview() {
   useEffect(() => {
     const getAllGradeReviews = async (idClass) => {
       const dataRespond = await getAllGradeReviewsOfClassroom(idClass);
-      const gradReviewRes = dataRespond.data.data;
+      const gradReviewRes = dataRespond.data.doc;
       console.log('Data respond: ', gradReviewRes);
+      const dataGradeReview = gradReviewRes.map((review) => ({
+        id: review._id,
+        studentName: review.student,
+        structureGrade: review.structureGrade.name,
+        currentGrade: review.currentGrade,
+        expectationGrade: review.expectationGrade,
+        reason: review.reason,
+      }));
+      console.log('dataGradeReview: ', dataGradeReview);
+      setListReviews(dataGradeReview);
     };
     getAllGradeReviews(idClass);
   }, [idClass]);
@@ -73,7 +67,7 @@ export default function GradeReview() {
   return (
     <div>
       <SubMenu></SubMenu>
-      <Table columns={columns} dataSource={data} />;
+      <Table columns={columns} dataSource={listReviews} />;
     </div>
   );
 }

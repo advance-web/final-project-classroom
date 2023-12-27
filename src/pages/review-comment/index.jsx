@@ -4,7 +4,7 @@ import { Button, Card, Form } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 
 import AuthContext from '../../contexts/auth/auth-context';
-import { getReviewDetail, getStudentGrade, postComment } from '../../services/classroom';
+import { getReviewDetail, getStudentGrade, postComment } from '../../services/grade';
 
 function ReviewComment() {
   const [reviewDetail, setReviewDetail] = useState();
