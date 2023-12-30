@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { UserOutlined } from '@ant-design/icons';
 import { Avatar, Button, List } from 'antd';
 
+import ExcelExportButton from '../../components/shared/exportToExcel';
 import SubMenu from '../../components/shared/subMenu';
 import NotificationContext from '../../contexts/notification/notificationContext';
 import useAuth from '../../hooks/useAuth';
@@ -34,6 +35,15 @@ export default function ShowClassroomMembers() {
 
   const listTeachers = classParticipants?.filter((item) => item.role === 'teacher') || [];
   const listStudents = classParticipants?.filter((item) => item.role === 'student') || [];
+  const listStudentsExportExcel = listStudents.map((student) => {
+    const resultStudent = {
+      fullname: student.name,
+      email: student.email,
+      role: student.role,
+    };
+
+    return resultStudent;
+  });
 
   const handleInviteByEmail = async () => {
     try {
@@ -54,6 +64,7 @@ export default function ShowClassroomMembers() {
   return (
     <div>
       <SubMenu></SubMenu>
+      <ExcelExportButton data={listStudentsExportExcel} fileName="DanhSachLop" sheetName="Data" />
       <div>
         {isTeacher && <Button onClick={() => setOpenInviteModal(true)}>+ Thêm thành viên mới</Button>}
         <InviteModal

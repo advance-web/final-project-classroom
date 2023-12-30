@@ -48,11 +48,11 @@ export default function GradeReview() {
   useEffect(() => {
     const getAllGradeReviews = async (idClass) => {
       const dataRespond = await getAllGradeReviewsOfClassroom(idClass);
-      const gradReviewRes = dataRespond.data.doc;
-      console.log('Data respond: ', gradReviewRes);
-      const dataGradeReview = gradReviewRes.map((review) => ({
+      const gradReviewRes = dataRespond.data.data;
+      console.log('Data respond: ', dataRespond);
+      const dataGradeReview = gradReviewRes?.map((review) => ({
         id: review._id,
-        studentName: review.student,
+        studentName: review.studentInfo.name + ' (' + review.studentInfo.email + ')',
         structureGrade: review.structureGrade.name,
         currentGrade: review.currentGrade,
         expectationGrade: review.expectationGrade,

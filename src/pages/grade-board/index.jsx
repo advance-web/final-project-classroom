@@ -5,7 +5,11 @@ import PropTypes from 'prop-types';
 
 import ExcelExportButton from '../../components/shared/exportToExcel';
 import SubMenu from '../../components/shared/subMenu';
-import { getAllGradeStructuresOfClassroom, getAllGradeStudentsOfClassroom } from '../../services/grade';
+import {
+  createAndUpdateGrade,
+  getAllGradeStructuresOfClassroom,
+  getAllGradeStudentsOfClassroom,
+} from '../../services/grade';
 
 const EditableContext = React.createContext(null);
 const EditableRow = ({ index, ...props }) => {
@@ -38,10 +42,13 @@ const EditableCell = ({ title, editable, children, dataIndex, record, handleSave
     try {
       const values = await form.validateFields();
       toggleEdit();
-      handleSave({
-        ...record,
-        ...values,
-      });
+      handleSave(
+        {
+          ...record,
+          ...values,
+        },
+        dataIndex
+      );
     } catch (errInfo) {
       console.log('Save failed:', errInfo);
     }
@@ -149,7 +156,7 @@ function GradeBoard() {
   ];
   console.log('List columns: ', listGradeComposition);
 
-  const handleSave = (row) => {
+  const handleSave = async (row, dataIndexChange) => {
     const newData = [...dataSource];
     const index = newData.findIndex((item) => row.key === item.key);
     const item = newData[index];
@@ -157,7 +164,18 @@ function GradeBoard() {
       ...item,
       ...row,
     });
-    setDataSource(newData);
+    console.log('Row', row);
+    const dataUpdatedGrade = {
+      student: row.key,
+      structureGrade: dataIndexChange,
+      grade: row[dataIndexChange],
+    };
+    console.log('Data update grade: ', dataUpdatedGrade);
+    const updatedGradeRes = await createAndUpdateGrade(dataUpdatedGrade);
+    console.log('Data response: ', updatedGradeRes);
+    if (updatedGradeRes.data.status == 'success') {
+      setDataSource(newData);
+    }
   };
   const components = {
     body: {
@@ -180,10 +198,19 @@ function GradeBoard() {
       }),
     };
   });
+
+  const gradeBoardExportExcel = dataSource?.map((item) => {
+    const newItem = {};
+    columns?.forEach((column) => {
+      newItem[column.title] = item[column.dataIndex];
+    });
+    return newItem;
+  });
+
   return (
     <div>
       <SubMenu></SubMenu>
-      <ExcelExportButton data={dataSource} fileName="UserData" sheetName="UserSheet" />
+      <ExcelExportButton data={gradeBoardExportExcel} fileName="UserData" sheetName="UserSheet" />
       <Table
         components={components}
         rowClassName={() => 'editable-row'}
