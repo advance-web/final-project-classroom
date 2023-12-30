@@ -24,7 +24,7 @@ import ResetPassword from './pages/reset-password';
 import ReviewComment from './pages/review-comment';
 import SignIn from './pages/sign-in';
 import SignUp from './pages/sign-up';
-import StudentViewGrade from './pages/studen-view-grade';
+import StudentViewGrade from './pages/student-view-grade';
 import SuccessPage from './pages/successPage';
 import UserProfile from './pages/user-profile';
 import { getMe } from './services/auth';
@@ -182,7 +182,7 @@ function App() {
           <Route path="/classroom/invite/:classroomId" element={<AcceptJoinClass />} />
 
           <Route path="/classroom/:id/studentGrade" element={<StudentViewGrade />} />
-          <Route path="/classroom/:id/gradeReview/:reviewId" element={<ReviewComment />} />
+          <Route path="/classroom/:id/grade-review/:reviewId" element={<ReviewComment />} />
           <Route
             path="/create-classroom"
             element={

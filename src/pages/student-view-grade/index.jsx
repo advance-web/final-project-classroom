@@ -4,7 +4,7 @@ import { Button, Form, Input, Modal, Table } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 
 import SubMenu from '../../components/shared/subMenu';
-import { getStudentGrade, postGradeReview } from '../../services/classroom';
+import { getStudentGrade, postGradeReview } from '../../services/grade';
 
 function StudentViewGrade() {
   const [studentGrade, setStudentGrade] = useState();
