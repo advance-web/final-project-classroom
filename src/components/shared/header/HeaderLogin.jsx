@@ -2,6 +2,7 @@ import { useContext, useState } from 'react';
 import { BiPlanet } from 'react-icons/bi';
 import { Link, Outlet } from 'react-router-dom';
 import {
+  BellOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   PlusCircleOutlined,
@@ -164,6 +165,9 @@ const HeaderLogin = () => {
                   <Link to="/create-classroom">Tạo lớp học</Link>
                 </Menu.Item>
               )}
+              <Menu.Item key="7" icon={<BellOutlined />}>
+                <Link to="/notifications">Notifications</Link>
+              </Menu.Item>
             </Menu>
           </Sider>
           <Card
