@@ -20,6 +20,7 @@ import GradeStructure from './pages/grade-structure';
 import Home from './pages/home';
 import Landing from './pages/landing';
 import LoginSuccess from './pages/notification/login-success';
+import Notifications from './pages/notifications';
 import ResetPassword from './pages/reset-password';
 import ReviewComment from './pages/review-comment';
 import SignIn from './pages/sign-in';
@@ -183,6 +184,7 @@ function App() {
 
           <Route path="/classroom/:id/studentGrade" element={<StudentViewGrade />} />
           <Route path="/classroom/:id/grade-review/:reviewId" element={<ReviewComment />} />
+          <Route path="/notifications" element={<Notifications />} />
           <Route
             path="/create-classroom"
             element={
