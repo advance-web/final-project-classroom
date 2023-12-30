@@ -4,7 +4,8 @@ import { Button, Card, Form } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 
 import AuthContext from '../../contexts/auth/auth-context';
-import { getReviewDetail, getStudentGrade, postComment } from '../../services/grade';
+import { getDetailClassroomById, getReviewDetail, getStudentGrade, postComment } from '../../services/classroom';
+import { notifyAnotherUserInClassroom } from '../../services/notification';
 
 function ReviewComment() {
   const [reviewDetail, setReviewDetail] = useState();
@@ -54,21 +55,21 @@ function ReviewComment() {
       const dataCallAPI = {
         comment: data.comment,
       };
-      console.log('Đơn phúc khảo: ', dataCallAPI);
+      console.log('Comment: ', dataCallAPI);
       // setError(null);
       //setLoading(true)
       const dataReturn = await postComment(reviewId, dataCallAPI);
       //setLoading(false)
-      console.log('API Response: ', dataReturn);
+      console.log('API Comment Response: ', dataReturn);
 
       const dataUser = dataReturn.data.data;
       const status = dataReturn.data.status;
 
       console.log('Status: ', status);
-      console.log('ReviewForm Resonse: ', dataUser);
+      console.log('Comment Response: ', dataUser);
 
       if (status === 'success') {
-        console.log('Gửi đơn phúc khảo thành công');
+        console.log('Gửi comment thành công');
 
         // Update the reviewDetail state with the new comment
         setReviewDetail((prevReviewDetail) => ({
@@ -84,6 +85,30 @@ function ReviewComment() {
           ],
         }));
         form.resetFields();
+
+        // Call API to get detail classroom to take the teacher ID
+        const dataClassDetailResponse = await getDetailClassroomById(idClass);
+        console.log('dataClassDetail Response: ', dataClassDetailResponse);
+        const dataClassroomDetail = dataClassDetailResponse.data.data;
+        const status = dataClassDetailResponse.data.status;
+
+        console.log('Status: ', status);
+        console.log('Classroom Detail Response: ', dataClassroomDetail);
+
+        // Call API to post Notify another user in classroom
+        let to;
+        if (reviewDetail.student == dataUser.user) {
+          to = dataClassroomDetail.teacher._id;
+        } else {
+          to = dataUser.user;
+        }
+        const data = {
+          to: to,
+          type: 'REPLY_GRADE_REVIEW',
+          redirect: `/classroom/${idClass}/gradeReview/${dataUser.id}`,
+        };
+        const dataNotify = await notifyAnotherUserInClassroom(idClass, data);
+        console.log('dataNotify Response: ', dataNotify);
       }
       // form.submit();
     } catch (error) {
