@@ -157,9 +157,6 @@ const HeaderLogin = () => {
               <Menu.Item key="4" icon={<VideoCameraOutlined />}>
                 <Link to="/home">Home</Link>
               </Menu.Item>
-              <Menu.Item key="5" icon={<UploadOutlined />}>
-                <Link to="/user-profile">Thông tin cá nhân</Link>
-              </Menu.Item>
               {isTeacher && (
                 <Menu.Item key="6" icon={<PlusCircleOutlined />}>
                   <Link to="/create-classroom">Tạo lớp học</Link>
@@ -167,6 +164,9 @@ const HeaderLogin = () => {
               )}
               <Menu.Item key="7" icon={<BellOutlined />}>
                 <Link to="/notifications">Notifications</Link>
+              </Menu.Item>
+              <Menu.Item key="5" icon={<UploadOutlined />}>
+                <Link to="/user-profile">Thông tin cá nhân</Link>
               </Menu.Item>
             </Menu>
           </Sider>

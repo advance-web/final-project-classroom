@@ -1,8 +1,12 @@
+import { useContext } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { Menu } from 'antd';
 
+import AuthContext from '../../../contexts/auth/auth-context';
+
 function SubMenu() {
   const { id } = useParams();
+  const { user } = useContext(AuthContext);
   const location = useLocation();
 
   const { pathname } = location;
@@ -48,18 +52,27 @@ function SubMenu() {
       <Menu.Item key="2">
         <Link to={`/classroom/${id}/participants`}>Mọi người</Link>
       </Menu.Item>
-      <Menu.Item key="3">
-        <Link to={`/classroom/${id}/grade-structure`}>Cấu trúc điểm</Link>
-      </Menu.Item>
-      <Menu.Item key="4">
-        <Link to={`/classroom/${id}/grade-board`}>Bảng điểm</Link>
-      </Menu.Item>
-      <Menu.Item key="5">
-        <Link to={`/classroom/${id}/grade-review`}>Phúc khảo</Link>
-      </Menu.Item>
-      <Menu.Item key="6">
-        <Link to={`/classroom/${id}/studentGrade`}>Điểm</Link>
-      </Menu.Item>
+
+      {user.role == 'teacher' && (
+        <Menu.Item key="3">
+          <Link to={`/classroom/${id}/grade-structure`}>Cấu trúc điểm</Link>
+        </Menu.Item>
+      )}
+      {user.role == 'teacher' && (
+        <Menu.Item key="4">
+          <Link to={`/classroom/${id}/grade-board`}>Bảng điểm</Link>
+        </Menu.Item>
+      )}
+      {user.role == 'teacher' && (
+        <Menu.Item key="5">
+          <Link to={`/classroom/${id}/grade-review`}>Phúc khảo</Link>
+        </Menu.Item>
+      )}
+      {user.role == 'student' && (
+        <Menu.Item key="6">
+          <Link to={`/classroom/${id}/studentGrade`}>Điểm</Link>
+        </Menu.Item>
+      )}
     </Menu>
   );
 }
