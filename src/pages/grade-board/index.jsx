@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Button, Form, Input, Table } from 'antd';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 
 import ExcelExportButton from '../../components/shared/exportToExcel';
 import SubMenu from '../../components/shared/subMenu';
@@ -250,11 +251,41 @@ function GradeBoard() {
     });
     return newItem;
   });
+  console.log('gradeBoardExportExcel: ', gradeBoardExportExcel);
+
+  const gradeBoardHasNoGradeExportExcel = dataSource?.map((item) => {
+    const newItem = {};
+    columns?.forEach((column) => {
+      if (column.dataIndex == 'name') {
+        newItem[column.title] = item[column.dataIndex];
+      } else {
+        newItem[column.title] = '';
+      }
+    });
+    return newItem;
+  });
+
+  console.log('gradeBoardHasNoGradeExportExcel: ', gradeBoardHasNoGradeExportExcel);
 
   return (
     <div>
       <SubMenu></SubMenu>
-      <ExcelExportButton data={gradeBoardExportExcel} fileName="UserData" sheetName="UserSheet" />
+      <CSSExcelExportButton>
+        <ExcelExportButton
+          data={gradeBoardHasNoGradeExportExcel}
+          fileName="Template_BangDiem"
+          sheetName="Data"
+          buttonName="Xuất bảng điểm mẫu (.xlsx)"
+        />
+      </CSSExcelExportButton>
+      <CSSExcelExportButton>
+        <ExcelExportButton
+          data={gradeBoardExportExcel}
+          fileName="BangDiem"
+          sheetName="Data"
+          buttonName="Xuất bảng điểm chính thức (.xlsx)"
+        />
+      </CSSExcelExportButton>
       <Table
         components={components}
         rowClassName={() => 'editable-row'}
@@ -267,6 +298,15 @@ function GradeBoard() {
 }
 
 export default GradeBoard;
+
+const CSSExcelExportButton = styled.div`
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 10px;
+`;
 
 EditableCell.propTypes = {
   title: PropTypes.func,

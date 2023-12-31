@@ -2,7 +2,7 @@ import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import * as XLSX from 'xlsx';
 
-const ExcelExportButton = ({ data, fileName, sheetName }) => {
+const ExcelExportButton = ({ data, fileName, sheetName, buttonName }) => {
   const exportToExcel = () => {
     const worksheet = XLSX.utils.json_to_sheet(data);
     const workbook = XLSX.utils.book_new();
@@ -12,7 +12,7 @@ const ExcelExportButton = ({ data, fileName, sheetName }) => {
 
   return (
     <Button type="primary" onClick={exportToExcel}>
-      Export to Excel
+      {buttonName}
     </Button>
   );
 };
@@ -23,4 +23,5 @@ ExcelExportButton.propTypes = {
   data: PropTypes.object,
   fileName: PropTypes.string,
   sheetName: PropTypes.string,
+  buttonName: PropTypes.string,
 };
