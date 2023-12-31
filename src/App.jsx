@@ -25,6 +25,7 @@ import ResetPassword from './pages/reset-password';
 import ReviewComment from './pages/review-comment';
 import SignIn from './pages/sign-in';
 import SignUp from './pages/sign-up';
+import MappingStudentID from './pages/student-mapping-id';
 import StudentViewGrade from './pages/student-view-grade';
 import SuccessPage from './pages/successPage';
 import UserProfile from './pages/user-profile';
@@ -231,6 +232,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="/student-mapping-id" element={<MappingStudentID />} />
           <Route path="/classroom/:id/grade-review/:reviewId" element={<ReviewComment />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route
