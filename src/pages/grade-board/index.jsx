@@ -12,7 +12,7 @@ import {
   getAllGradeStructuresOfClassroom,
   getAllGradeStudentsOfClassroom,
 } from '../../services/grade';
-import { notifyAllStudentInClassroom } from '../../services/notification';
+import { createAndUpdateIdMappingByTeacher, notifyAllStudentInClassroom } from '../../services/notification';
 
 const EditableContext = React.createContext(null);
 const EditableRow = ({ index, ...props }) => {
@@ -134,11 +134,18 @@ function GradeBoard() {
         const resultItem = {
           key: studentInfo._id,
           name: studentInfo.name,
+          idMapping: studentInfo.idMapping,
         };
 
         listGradeComposition?.forEach((column) => {
           if (column.dataIndex !== 'name') {
-            resultItem[column.dataIndex] = '_';
+            if (column.dataIndex !== 'idMapping') {
+              resultItem[column.dataIndex] = '_';
+            } else {
+              if (studentInfo.idMapping === undefined) {
+                resultItem[column.dataIndex] = '_';
+              }
+            }
           }
         });
 
@@ -163,7 +170,13 @@ function GradeBoard() {
     {
       title: 'Họ tên',
       dataIndex: 'name',
-      width: '30%',
+      width: '20%',
+    },
+    {
+      title: 'Mã số sinh viên',
+      dataIndex: 'idMapping',
+      width: '15%',
+      editable: true,
     },
   ];
   console.log('List columns: ', listGradeComposition);
@@ -177,16 +190,32 @@ function GradeBoard() {
       ...row,
     });
     console.log('Row', row);
-    const dataUpdatedGrade = {
-      student: row.key,
-      structureGrade: dataIndexChange,
-      grade: row[dataIndexChange],
-    };
-    console.log('Data update grade: ', dataUpdatedGrade);
-    const updatedGradeRes = await createAndUpdateGrade(dataUpdatedGrade);
-    // console.log('Data response: ', updatedGradeRes);
-    if (updatedGradeRes.data.status == 'success') {
-      setDataSource(newData);
+
+    if (dataIndexChange == 'idMapping') {
+      const updatedIdMapping = {
+        id: row[dataIndexChange],
+      };
+
+      const idUser = row.key;
+      console.log(updatedIdMapping);
+
+      const updatedIdMappingRes = await createAndUpdateIdMappingByTeacher(idUser, updatedIdMapping);
+      console.log('Mapping respond: ', updatedIdMappingRes);
+      if (updatedIdMappingRes.data.status == 'success') {
+        setDataSource(newData);
+      }
+    } else {
+      const dataUpdatedGrade = {
+        student: row.key,
+        structureGrade: dataIndexChange,
+        grade: row[dataIndexChange],
+      };
+      console.log('Data update grade: ', dataUpdatedGrade);
+      const updatedGradeRes = await createAndUpdateGrade(dataUpdatedGrade);
+      console.log('Data response: ', updatedGradeRes);
+      if (updatedGradeRes.data.status == 'success') {
+        setDataSource(newData);
+      }
     }
   };
 

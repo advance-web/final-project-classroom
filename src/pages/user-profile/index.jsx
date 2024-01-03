@@ -61,12 +61,29 @@ export default function UserProfile() {
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
         style={{ maxWidth: 600 }}
-        initialValues={{ email: user.email, fullname: user.name, telephone: user.phone, address: user.address }}
+        initialValues={{
+          email: user.email,
+          idMapping: user.idMapping,
+          fullname: user.name,
+          telephone: user.phone,
+          address: user.address,
+        }}
         onFinish={onFinish}
       >
         <Form.Item label="Email" name="email">
           <Input size="large" prefix={<UserOutlined className="site-form-item-icon" />} readOnly value={user.email} />
         </Form.Item>
+
+        {user.role == 'student' && (
+          <Form.Item label="ID Mapping" name="idMapping">
+            <Input
+              size="large"
+              prefix={<UserOutlined className="site-form-item-icon" />}
+              readOnly
+              value={user.idMapping}
+            />
+          </Form.Item>
+        )}
 
         <Form.Item
           label="Fullname"

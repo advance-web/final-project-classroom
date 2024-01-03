@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button, Form, Input, Modal, Typography } from 'antd';
 
 import SubmitButton from '../../components/ui/SubmitButton';
+import { createAndUpdateIdMapping } from '../../services/student';
 
 import '../../css/signupStyle.css';
 
@@ -34,19 +35,19 @@ export default function CreateClassroom() {
     try {
       const { studentID } = form.getFieldValue();
       const dataCallAPI = {
-        studentID: studentID,
+        idMapping: studentID,
       };
       console.log('Data call API: ', dataCallAPI);
 
       setError(null);
-      /*const dataRespond = await createClassroom(dataCallAPI);
+      const dataRespond = await createAndUpdateIdMapping(dataCallAPI);
       setLoading(false);
       console.log('response', dataRespond);
 
       if (dataRespond.data.status == 'success') {
         showSuccessMessage();
         //setSuccessClassroom(dataRespond.data.data.id);
-      }*/
+      }
 
       form.submit();
     } catch (error) {
