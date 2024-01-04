@@ -4,7 +4,9 @@ import { Button, Form, Input, Modal, Table } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 
 import SubMenu from '../../components/shared/subMenu';
+import { getDetailClassroomById } from '../../services/classroom';
 import { getStudentGrade, postGradeReview } from '../../services/grade';
+import { notifyAnotherUserInClassroom } from '../../services/notification';
 
 function StudentViewGrade() {
   const [studentGrade, setStudentGrade] = useState();
@@ -71,6 +73,24 @@ function StudentViewGrade() {
 
       if (status == 'success') {
         console.log('Gửi đơn phúc khảo thành công');
+
+        // Call API to get detail classroom to take the teacher ID
+        const dataClassDetailResponse = await getDetailClassroomById(idClass);
+        console.log('dataClassDetail Response: ', dataClassDetailResponse);
+        const dataClassroomDetail = dataClassDetailResponse.data.data;
+        const status = dataClassDetailResponse.data.status;
+
+        console.log('Status: ', status);
+        console.log('Classroom Detail Response: ', dataClassroomDetail);
+
+        // Call API to post Notify another user in classroom
+        const sendDataNotify = {
+          to: dataClassroomDetail.teacher._id,
+          type: 'NEW_GRADE_REVIEW',
+          redirect: `/classroom/${idClass}/grade-review/${dataUser.id}`,
+        };
+        const dataNotify = await notifyAnotherUserInClassroom(idClass, sendDataNotify);
+        console.log('dataNotify Response: ', dataNotify);
       }
       // form.submit();
     } catch (error) {

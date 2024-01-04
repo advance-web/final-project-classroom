@@ -1,15 +1,17 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Form, Input, Table } from 'antd';
+import { Button, Form, Input, Table } from 'antd';
 import PropTypes from 'prop-types';
 
 import ExcelExportButton from '../../components/shared/exportToExcel';
 import SubMenu from '../../components/shared/subMenu';
 import {
   createAndUpdateGrade,
+  finalizeStructureGrade,
   getAllGradeStructuresOfClassroom,
   getAllGradeStudentsOfClassroom,
 } from '../../services/grade';
+import { notifyAllStudentInClassroom } from '../../services/notification';
 
 const EditableContext = React.createContext(null);
 const EditableRow = ({ index, ...props }) => {
@@ -97,11 +99,20 @@ function GradeBoard() {
     const getAllGradeStructures = async (idClass) => {
       const dataRespond = await getAllGradeStructuresOfClassroom(idClass);
       const gradeDataRespond = dataRespond.data.data;
-      //console.log('Data respond: ', gradeDataRespond);
+      console.log('Data respond: ', gradeDataRespond);
       const gradeColumns = gradeDataRespond?.map((item) => ({
-        title: item.name + ' (' + item.scale + ')',
+        // title: item.name + ' (' + item.scale + ')',
+        title: () => (
+          <>
+            {item.name} ({item.scale}){' '}
+            <Button type="primary" danger onClick={() => handleFinalize(item?.id)} disabled={item?.isFinalize}>
+              {/* <a href="">Finalize</a> */}
+              Finalize
+            </Button>
+          </>
+        ),
         dataIndex: item._id,
-        editable: true,
+        editable: !item?.isFinalize,
       }));
       //console.log('List gradeColumns: ', gradeColumns);
       const dataColumns = [...defaultColumns, ...gradeColumns];
@@ -172,11 +183,44 @@ function GradeBoard() {
     };
     console.log('Data update grade: ', dataUpdatedGrade);
     const updatedGradeRes = await createAndUpdateGrade(dataUpdatedGrade);
-    console.log('Data response: ', updatedGradeRes);
+    // console.log('Data response: ', updatedGradeRes);
     if (updatedGradeRes.data.status == 'success') {
       setDataSource(newData);
     }
   };
+
+  const handleFinalize = async (gradeStructureId) => {
+    try {
+      const isFinalizeData = {
+        isFinalize: true,
+      };
+      const responseFinalizeStructureGrade = await finalizeStructureGrade(gradeStructureId, isFinalizeData);
+      console.log(responseFinalizeStructureGrade);
+
+      if (responseFinalizeStructureGrade.data.status === 'success') {
+        // Notify call API
+        const data = {
+          type: 'FINALIZE_GRADE',
+          redirect: `/classroom/${idClass}/studentGrade`,
+        };
+        const result = await notifyAllStudentInClassroom(idClass, data);
+        console.log('Response sau khi call API notify:', result);
+
+        // set lại state
+        setListGradeComposition((prev) => {
+          return prev.map((item) => {
+            if (item?.dataIndex === responseFinalizeStructureGrade?.data?.data?.id) {
+              return { ...item, editable: false };
+            }
+            return item;
+          });
+        });
+      }
+    } catch (error) {
+      console.log('Lỗi: ', error);
+    }
+  };
+
   const components = {
     body: {
       row: EditableRow,
@@ -225,7 +269,7 @@ function GradeBoard() {
 export default GradeBoard;
 
 EditableCell.propTypes = {
-  title: PropTypes.string,
+  title: PropTypes.func,
   editable: PropTypes.bool,
   children: PropTypes.node,
   dataIndex: PropTypes.string,

@@ -15,3 +15,7 @@ export const patchSeenNotification = (notificationId, data) => {
 export const notifyAnotherUserInClassroom = (classroomId, data) => {
   return request.post(CLASSROOM + classroomId + '/unicast', data);
 };
+
+export const notifyAllStudentInClassroom = (classroomId, data) => {
+  return request.post(CLASSROOM + classroomId + '/broadcast', data);
+};

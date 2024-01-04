@@ -12,6 +12,7 @@ const GET_STUDENT_GRADE_ENDPOINT = '/students/grade/';
 const GET_STRUCTURE_GRADE_ENDPOINT = (idClass) => `/classroom/${idClass}/structureGrade`;
 const GET_ALL_STUDENT_GRADE_IN_ENDPOINT = (idClass) => `/classroom/${idClass}/studentGrade`;
 const CREATE_OR_UPDATE_GRADE_ENDPOINT = '/teachers/mark-grade';
+const STRUCTURE_GRADE_ENDPOINT = '/structureGrade/';
 
 // ReviewComment
 const REVIEW_GRADE_ENDPOINT = '/gradeReview/';
@@ -56,6 +57,10 @@ export const createAndUpdateGrade = (data) => {
   return request.post(CREATE_OR_UPDATE_GRADE_ENDPOINT, data);
 };
 
+export const finalizeStructureGrade = (structureGradeId, data) => {
+  return request.patch(STRUCTURE_GRADE_ENDPOINT + structureGradeId, data);
+};
+
 // ReviewComment
 export const postGradeReview = (data) => {
   return request.post(REVIEW_GRADE_ENDPOINT, data);
@@ -63,6 +68,10 @@ export const postGradeReview = (data) => {
 
 export const getReviewDetail = (reviewId) => {
   return request.get(REVIEW_GRADE_ENDPOINT + reviewId);
+};
+
+export const updateGradeReviewStatus = (reviewId, data) => {
+  return request.patch(REVIEW_GRADE_ENDPOINT + reviewId, data);
 };
 
 export const postComment = (reviewId, data) => {

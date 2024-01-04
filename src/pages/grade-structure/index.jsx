@@ -58,7 +58,7 @@ export default function GradeStructure() {
       setData(dataRespond.data.data);
     };
     getAllGradeStructures(idClass);
-  }, []);
+  }, [idClass]);
 
   const isEditing = (record) => record._id === editingKey;
 
