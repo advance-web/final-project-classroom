@@ -1,10 +1,11 @@
 import { useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Button, Card, Form } from 'antd';
+import { Button, Card, Flex, Form, Input } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 
 import AuthContext from '../../contexts/auth/auth-context';
-import { getDetailClassroomById, getReviewDetail, getStudentGrade, postComment } from '../../services/classroom';
+import { getDetailClassroomById } from '../../services/classroom';
+import { getReviewDetail, getStudentGrade, postComment, updateGradeReviewStatus } from '../../services/grade';
 import { notifyAnotherUserInClassroom } from '../../services/notification';
 
 function ReviewComment() {
@@ -22,6 +23,7 @@ function ReviewComment() {
   console.log('Review Id: ', reviewId);
 
   const [form] = Form.useForm();
+  const [form1] = Form.useForm();
 
   useEffect(() => {
     const reviewDetail = async (id) => {
@@ -105,7 +107,7 @@ function ReviewComment() {
         const data = {
           to: to,
           type: 'REPLY_GRADE_REVIEW',
-          redirect: `/classroom/${idClass}/gradeReview/${dataUser.id}`,
+          redirect: `/classroom/${idClass}/grade-review/${reviewId}`,
         };
         const dataNotify = await notifyAnotherUserInClassroom(idClass, data);
         console.log('dataNotify Response: ', dataNotify);
@@ -117,6 +119,130 @@ function ReviewComment() {
     }
   };
   console.log('Review Detail: ', reviewDetail);
+
+  const handleAccepted = async () => {
+    const formValue = form1.getFieldValue();
+    console.log('Form data: ', formValue);
+    const data = {
+      status: 'ACCEPTED',
+      finalGrade: formValue.finalGrade,
+    };
+    const response = await updateGradeReviewStatus(reviewId, data);
+    console.log('Response: ', response);
+    if (response?.data?.status === 'success') {
+      setReviewDetail((prev) => {
+        return {
+          ...prev,
+          status: 'ACCEPTED',
+          finalGrade: response?.data?.data?.finalGrade,
+        };
+      });
+      // Call API to get detail classroom to take the teacher ID
+      const dataClassDetailResponse = await getDetailClassroomById(idClass);
+      console.log('dataClassDetail Response: ', dataClassDetailResponse);
+      const dataClassroomDetail = dataClassDetailResponse.data.data;
+      const status = dataClassDetailResponse.data.status;
+
+      console.log('Status: ', status);
+      console.log('Classroom Detail Response: ', dataClassroomDetail);
+
+      // Call API to post Notify another user in classroom
+      const data = {
+        to: reviewDetail?.student,
+        type: 'DECIDED_GRADE_REVIEW',
+        redirect: `/classroom/${idClass}/grade-review/${reviewId}`,
+      };
+      const dataNotify = await notifyAnotherUserInClassroom(idClass, data);
+      console.log('dataNotify Response: ', dataNotify);
+    }
+  };
+
+  const handleDenied = async () => {
+    const data = {
+      status: 'DENIED',
+    };
+    const response = await updateGradeReviewStatus(reviewId, data);
+    console.log('Response: ', response);
+    if (response?.data?.status === 'success') {
+      setReviewDetail((prev) => {
+        return {
+          ...prev,
+          status: 'DENIED',
+        };
+      });
+      // Call API to get detail classroom to take the teacher ID
+      const dataClassDetailResponse = await getDetailClassroomById(idClass);
+      console.log('dataClassDetail Response: ', dataClassDetailResponse);
+      const dataClassroomDetail = dataClassDetailResponse.data.data;
+      const status = dataClassDetailResponse.data.status;
+
+      console.log('Status: ', status);
+      console.log('Classroom Detail Response: ', dataClassroomDetail);
+
+      // Call API to post Notify another user in classroom
+      const data = {
+        to: reviewDetail?.student,
+        type: 'DECIDED_GRADE_REVIEW',
+        redirect: `/classroom/${idClass}/grade-review/${reviewId}`,
+      };
+      const dataNotify = await notifyAnotherUserInClassroom(idClass, data);
+      console.log('dataNotify Response: ', dataNotify);
+    }
+  };
+
+  let statusMessages;
+  switch (reviewDetail?.status) {
+    case 'INREVIEW':
+      statusMessages = (
+        <Flex wrap="wrap" gap="small">
+          <Form
+            name="form1"
+            form={form1}
+            key={form1}
+            initialValues={{
+              remember: true,
+            }}
+            autoComplete="off"
+          >
+            <Form.Item
+              name="finalGrade"
+              label="Final grade"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+          </Form>
+          <Button type="primary" onClick={() => handleAccepted()}>
+            Chấp thuận
+          </Button>
+          <Button type="primary" danger onClick={() => handleDenied()}>
+            Từ chối
+          </Button>
+        </Flex>
+      );
+      break;
+    case 'ACCEPTED':
+      statusMessages = (
+        <p>
+          <strong>Tình trạng</strong>: Đã được chấp nhận
+        </p>
+      );
+      break;
+    case 'DENIED':
+      statusMessages = (
+        <p>
+          <strong>Tình trạng</strong>: Đã bị từ chối
+        </p>
+      );
+      break;
+    default:
+      break;
+  }
+
   return (
     <>
       <Card>
@@ -141,12 +267,15 @@ function ReviewComment() {
         })}
         <p>Điểm mong muốn: {reviewDetail?.expectationGrade}</p>
         <p>Lí do: {reviewDetail?.reason}</p>
+        <p>Điểm cuối cùng: {reviewDetail?.finalGrade}</p>
+        {statusMessages}
       </Card>
       <Card>
         <h2>
           Phần bình luận:
           <Form
             form={form}
+            key={form}
             name="basic"
             style={{
               minWidth: '800px',
