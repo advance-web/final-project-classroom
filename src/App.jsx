@@ -25,6 +25,7 @@ import ResetPassword from './pages/reset-password';
 import ReviewComment from './pages/review-comment';
 import SignIn from './pages/sign-in';
 import SignUp from './pages/sign-up';
+import MappingStudentID from './pages/student-mapping-id';
 import StudentViewGrade from './pages/student-view-grade';
 import SuccessPage from './pages/successPage';
 import UserProfile from './pages/user-profile';
@@ -175,14 +176,63 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="/classroom/:id" element={<ClassDetail />} />
-          <Route path="/classroom/:id/participants" element={<ShowClassroomMembers />} />
-          <Route path="/classroom/:id/grade-structure" element={<GradeStructure />} />
-          <Route path="/classroom/:id/grade-board" element={<GradeBoard />} />
-          <Route path="/classroom/:id/grade-review" element={<GradeReview />} />
+          <Route
+            path="/classroom/:id"
+            element={
+              <ProtectedRoute>
+                <ClassDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/classroom/:id/participants"
+            element={
+              <ProtectedRoute>
+                <ShowClassroomMembers />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/classroom/:id/grade-structure"
+            element={
+              <ProtectedRoute>
+                <RestrictedRoute role="teacher">
+                  <GradeStructure />
+                </RestrictedRoute>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/classroom/:id/grade-board"
+            element={
+              <ProtectedRoute>
+                <RestrictedRoute role="teacher">
+                  <GradeBoard />
+                </RestrictedRoute>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/classroom/:id/grade-review"
+            element={
+              <ProtectedRoute>
+                <GradeReview />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/classroom/invite/:classroomId" element={<AcceptJoinClass />} />
 
-          <Route path="/classroom/:id/studentGrade" element={<StudentViewGrade />} />
+          <Route
+            path="/classroom/:id/studentGrade"
+            element={
+              <ProtectedRoute>
+                <RestrictedRoute role="student">
+                  <StudentViewGrade />
+                </RestrictedRoute>
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/student-mapping-id" element={<MappingStudentID />} />
           <Route path="/classroom/:id/grade-review/:reviewId" element={<ReviewComment />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route

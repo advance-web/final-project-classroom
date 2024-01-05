@@ -3,6 +3,7 @@ import { BiPlanet } from 'react-icons/bi';
 import { Link, Outlet } from 'react-router-dom';
 import {
   BellOutlined,
+  HeatMapOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   PlusCircleOutlined,
@@ -157,9 +158,6 @@ const HeaderLogin = () => {
               <Menu.Item key="4" icon={<VideoCameraOutlined />}>
                 <Link to="/home">Home</Link>
               </Menu.Item>
-              <Menu.Item key="5" icon={<UploadOutlined />}>
-                <Link to="/user-profile">Thông tin cá nhân</Link>
-              </Menu.Item>
               {isTeacher && (
                 <Menu.Item key="6" icon={<PlusCircleOutlined />}>
                   <Link to="/create-classroom">Tạo lớp học</Link>
@@ -167,6 +165,12 @@ const HeaderLogin = () => {
               )}
               <Menu.Item key="7" icon={<BellOutlined />}>
                 <Link to="/notifications">Notifications</Link>
+              </Menu.Item>
+              <Menu.Item key="8" icon={<HeatMapOutlined />}>
+                <Link to="/student-mapping-id">Mapping mã số sinh viên</Link>
+              </Menu.Item>
+              <Menu.Item key="5" icon={<UploadOutlined />}>
+                <Link to="/user-profile">Thông tin cá nhân</Link>
               </Menu.Item>
             </Menu>
           </Sider>
