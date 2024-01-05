@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { DndContext, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { SortableContext } from '@dnd-kit/sortable';
 import { Button, Form, Input, InputNumber, Popconfirm, Table, Typography } from 'antd';
+import { arrayMoveImmutable } from 'array-move';
 import PropTypes from 'prop-types';
 
 import SubMenu from '../../components/shared/subMenu';
@@ -12,6 +15,7 @@ import {
 } from '../../services/grade';
 
 import CreateGradeCompositionModal from './components/create-grade-composition-modal';
+import DraggableRow from './components/DraggableRow';
 
 const EditableCell = ({ editing, dataIndex, title, inputType, children, ...restProps }) => {
   const inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
@@ -199,6 +203,21 @@ export default function GradeStructure() {
     }
   };
 
+  const handleOnSortEnd = ({ active, over }) => {
+    setData((prev) => {
+      const activeIndex = prev.findIndex((i) => i._id === active.id);
+      const overIndex = prev.findIndex((i) => i._id === over?.id);
+      return arrayMoveImmutable(prev, activeIndex, overIndex);
+    });
+  };
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 1,
+      },
+    })
+  );
   return (
     <div>
       <SubMenu></SubMenu>
@@ -214,18 +233,26 @@ export default function GradeStructure() {
       </div>
       <div style={{ maxWidth: '800px', margin: 'auto', padding: '20px' }}>
         <Form form={form} component={false}>
-          <Table
-            components={{
-              body: {
-                cell: EditableCell,
-              },
-            }}
-            bordered
-            dataSource={data}
-            columns={mergedColumns}
-            rowClassName="editable-row"
-            pagination={false}
-          />
+          <DndContext sensors={sensors} onDragEnd={handleOnSortEnd}>
+            <SortableContext items={data.map((i) => i._id)}>
+              <Table
+                components={{
+                  body: {
+                    cell: EditableCell,
+                    row: DraggableRow,
+                  },
+                }}
+                bordered
+                dataSource={data.map((item) => {
+                  return { ...item, key: item._id };
+                })}
+                columns={mergedColumns}
+                rowClassName="editable-row"
+                pagination={false}
+                rowKey="key"
+              />
+            </SortableContext>
+          </DndContext>
         </Form>
       </div>
     </div>
