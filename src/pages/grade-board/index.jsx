@@ -12,7 +12,8 @@ import {
   getAllGradeStructuresOfClassroom,
   getAllGradeStudentsOfClassroom,
 } from '../../services/grade';
-import { createAndUpdateIdMappingByTeacher, notifyAllStudentInClassroom } from '../../services/notification';
+import { notifyAllStudentInClassroom } from '../../services/notification';
+import { createAndUpdateIdMappingByTeacher } from '../../services/teacher';
 
 const EditableContext = React.createContext(null);
 const EditableRow = ({ index, ...props }) => {
