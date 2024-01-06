@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Button, Form, Input, Table } from 'antd';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
 
 import ExcelExportButton from '../../components/shared/exportToExcel';
 import SubMenu from '../../components/shared/subMenu';
@@ -300,22 +299,18 @@ function GradeBoard() {
   return (
     <div>
       <SubMenu></SubMenu>
-      <CSSExcelExportButton>
-        <ExcelExportButton
-          data={gradeBoardHasNoGradeExportExcel}
-          fileName="Template_BangDiem"
-          sheetName="Data"
-          buttonName="Xuất bảng điểm mẫu (.xlsx)"
-        />
-      </CSSExcelExportButton>
-      <CSSExcelExportButton>
-        <ExcelExportButton
-          data={gradeBoardExportExcel}
-          fileName="BangDiem"
-          sheetName="Data"
-          buttonName="Xuất bảng điểm chính thức (.xlsx)"
-        />
-      </CSSExcelExportButton>
+      <ExcelExportButton
+        data={gradeBoardHasNoGradeExportExcel}
+        fileName="Template_BangDiem"
+        sheetName="Data"
+        buttonName="Download bảng điểm mẫu (.xlsx)"
+      />
+      <ExcelExportButton
+        data={gradeBoardExportExcel}
+        fileName="BangDiem"
+        sheetName="Data"
+        buttonName="Download bảng điểm chính thức (.xlsx)"
+      />
       <Table
         components={components}
         rowClassName={() => 'editable-row'}
@@ -328,15 +323,6 @@ function GradeBoard() {
 }
 
 export default GradeBoard;
-
-const CSSExcelExportButton = styled.div`
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-right: 10px;
-`;
 
 EditableCell.propTypes = {
   title: PropTypes.func,

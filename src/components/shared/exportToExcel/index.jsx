@@ -1,5 +1,7 @@
+import { DownloadOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 import * as XLSX from 'xlsx';
 
 const ExcelExportButton = ({ data, fileName, sheetName, buttonName }) => {
@@ -11,13 +13,24 @@ const ExcelExportButton = ({ data, fileName, sheetName, buttonName }) => {
   };
 
   return (
-    <Button type="primary" onClick={exportToExcel}>
-      {buttonName}
-    </Button>
+    <CSSExcelExportButton>
+      <Button type="primary" onClick={exportToExcel}>
+        <DownloadOutlined /> {buttonName}
+      </Button>
+    </CSSExcelExportButton>
   );
 };
 
 export default ExcelExportButton;
+
+const CSSExcelExportButton = styled.div`
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 16px;
+  margin-bottom: 16px;
+`;
 
 ExcelExportButton.propTypes = {
   data: PropTypes.object,

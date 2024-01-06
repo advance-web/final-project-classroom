@@ -232,7 +232,16 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="/student-mapping-id" element={<MappingStudentID />} />
+          <Route
+            path="/student-mapping-id"
+            element={
+              <ProtectedRoute>
+                <RestrictedRoute role="student">
+                  <MappingStudentID />
+                </RestrictedRoute>
+              </ProtectedRoute>
+            }
+          />
           <Route path="/classroom/:id/grade-review/:reviewId" element={<ReviewComment />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route
