@@ -29,6 +29,7 @@ import SignUp from './pages/sign-up';
 import MappingStudentID from './pages/student-mapping-id';
 import StudentViewGrade from './pages/student-view-grade';
 import SuccessPage from './pages/successPage';
+import UploadGradeFile from './pages/upload-grade-file';
 import UserProfile from './pages/user-profile';
 import { getMe } from './services/auth';
 
@@ -209,6 +210,16 @@ function App() {
               <ProtectedRoute>
                 <RestrictedRoute role="teacher">
                   <GradeBoard />
+                </RestrictedRoute>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/classroom/:id/upload-grade-file"
+            element={
+              <ProtectedRoute>
+                <RestrictedRoute role="teacher">
+                  <UploadGradeFile />
                 </RestrictedRoute>
               </ProtectedRoute>
             }
