@@ -6,7 +6,7 @@ const UPDATE_GRADE_STRUCTURES_ENDPOINT = (idComposition) => `/structureGrade/${i
 const DELETE_GRADE_STRUCTURES_ENDPOINT = (idComposition) => `/structureGrade/${idComposition}`;
 const GET_ALL_GRADE_STUDENTS_ENDPOINT = (idClass) => `/classroom/${idClass}/studentGrade`;
 const GET_ALL_GRADE_REVIEW_ENDPOINT = (idClass) => `/classroom/${idClass}/gradeReview`;
-
+const SORT_STRUCTURE_GRADE_ENDPOINT = (id) => `/structureGrade/${id}/sort`;
 // Grade
 const GET_STUDENT_GRADE_ENDPOINT = '/students/grade/';
 const GET_STRUCTURE_GRADE_ENDPOINT = (idClass) => `/classroom/${idClass}/structureGrade`;
@@ -76,4 +76,8 @@ export const updateGradeReviewStatus = (reviewId, data) => {
 
 export const postComment = (reviewId, data) => {
   return request.post(REVIEW_GRADE_ENDPOINT + reviewId + '/comments', data);
+};
+
+export const sortStructureGrade = (id, data) => {
+  return request.patch(SORT_STRUCTURE_GRADE_ENDPOINT(id), data);
 };

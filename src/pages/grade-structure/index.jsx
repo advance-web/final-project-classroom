@@ -11,6 +11,7 @@ import {
   createGradeStructure,
   deleteGradeStructureOfClassroom,
   getAllGradeStructuresOfClassroom,
+  sortStructureGrade,
   updateGradeStructureOfClassroom,
 } from '../../services/grade';
 
@@ -203,12 +204,30 @@ export default function GradeStructure() {
     }
   };
 
-  const handleOnSortEnd = ({ active, over }) => {
+  const handleOnSortEnd = async ({ active, over }) => {
+    if (active.id === over.id) return;
+    const activeIndex = data.findIndex((i) => i._id === active.id);
+    const overIndex = data.findIndex((i) => i._id === over?.id);
+
+    const prevIndex = overIndex - 1;
+    const nextIndex = overIndex;
+    const currentId = data[activeIndex].id;
+    let reqBody = {};
+    // First: overIndex = 0
+    if (overIndex === 0) {
+      reqBody = { next: data[0].id };
+    } else if (overIndex === data.length - 1) {
+      reqBody = { prev: data[data.length - 1].id };
+    } else {
+      reqBody = { prev: data[prevIndex].id, nextIndex: data[nextIndex].id };
+    }
+    // between:
     setData((prev) => {
-      const activeIndex = prev.findIndex((i) => i._id === active.id);
-      const overIndex = prev.findIndex((i) => i._id === over?.id);
       return arrayMoveImmutable(prev, activeIndex, overIndex);
     });
+    const response = await sortStructureGrade(currentId, reqBody);
+    console.log(response);
+    // Last: overIndex = prev.length - 1
   };
 
   const sensors = useSensors(
