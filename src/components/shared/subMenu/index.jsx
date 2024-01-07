@@ -30,6 +30,9 @@ function SubMenu() {
     case pathname.includes('studentGrade'):
       selectedKey = '6';
       break;
+    case pathname.includes('import-excel-list-student'):
+      selectedKey = '7';
+      break;
     default:
       selectedKey = '1';
   }
@@ -71,6 +74,11 @@ function SubMenu() {
       {user.role == 'student' && (
         <Menu.Item key="6">
           <Link to={`/classroom/${id}/studentGrade`}>Điểm</Link>
+        </Menu.Item>
+      )}
+      {user.role == 'teacher' && (
+        <Menu.Item key="7">
+          <Link to={`/classroom/${id}/import-excel-list-student`}>Import danh sách lớp</Link>
         </Menu.Item>
       )}
     </Menu>
