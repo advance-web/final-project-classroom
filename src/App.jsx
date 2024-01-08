@@ -18,6 +18,7 @@ import GradeBoard from './pages/grade-board';
 import GradeReview from './pages/grade-review';
 import GradeStructure from './pages/grade-structure';
 import Home from './pages/home';
+import ReadFileExcelListStudents from './pages/import-excel-list-students';
 import Landing from './pages/landing';
 import LoginSuccess from './pages/notification/login-success';
 import Notifications from './pages/notifications';
@@ -213,6 +214,16 @@ function App() {
             }
           />
           <Route
+            path="/classroom/:id/import-excel-list-student"
+            element={
+              <ProtectedRoute>
+                <RestrictedRoute role="teacher">
+                  <ReadFileExcelListStudents />
+                </RestrictedRoute>
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/classroom/:id/grade-review"
             element={
               <ProtectedRoute>
@@ -232,7 +243,16 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="/student-mapping-id" element={<MappingStudentID />} />
+          <Route
+            path="/student-mapping-id"
+            element={
+              <ProtectedRoute>
+                <RestrictedRoute role="student">
+                  <MappingStudentID />
+                </RestrictedRoute>
+              </ProtectedRoute>
+            }
+          />
           <Route path="/classroom/:id/grade-review/:reviewId" element={<ReviewComment />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route

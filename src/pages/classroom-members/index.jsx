@@ -68,7 +68,7 @@ export default function ShowClassroomMembers() {
         data={listStudentsExportExcel}
         fileName="DanhSachLop"
         sheetName="Data"
-        buttonName="Xuất danh sách lớp (.xlsx)"
+        buttonName="Download danh sách lớp (.xlsx)"
       />
       <div>
         {isTeacher && <Button onClick={() => setOpenInviteModal(true)}>+ Thêm thành viên mới</Button>}
