@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { UploadOutlined } from '@ant-design/icons';
-import { Button, Upload } from 'antd';
+import { Button, Table, Upload } from 'antd';
 import * as XLSX from 'xlsx';
 
 import SubMenu from '../../components/shared/subMenu';
@@ -143,6 +143,24 @@ function UploadGradeFile() {
     });
   };
 
+  const columns =
+    excelData &&
+    Object.keys(excelData[0]).map((key) => {
+      return {
+        title: key,
+        dataIndex: key,
+        key: key,
+      };
+    });
+
+  const dataSource = excelData?.map((individualExcelData, index) => {
+    const data = {};
+    Object.keys(individualExcelData).map((key) => {
+      data[key] = individualExcelData[key];
+    });
+    return { key: index.toString(), ...data };
+  });
+
   return (
     <>
       <SubMenu></SubMenu>
@@ -170,7 +188,7 @@ function UploadGradeFile() {
         {typeError && <div role="alert">{typeError}</div>}
       </form> */}
       {/* view data */}
-      {excelData ? (
+      {/* {excelData ? (
         <div>
           <table>
             <thead>
@@ -196,10 +214,18 @@ function UploadGradeFile() {
         </div>
       ) : (
         <div>No File is uploaded yet!</div>
+      )} */}
+
+      {excelData ? (
+        <>
+          <Table dataSource={dataSource} columns={columns} pagination={false} />
+          <Button type="primary" onClick={() => handleFileSubmit()}>
+            Submit
+          </Button>
+        </>
+      ) : (
+        <div>No File is uploaded yet!</div>
       )}
-      <Button type="primary" onClick={() => handleFileSubmit()}>
-        Submit
-      </Button>
     </>
   );
 }
