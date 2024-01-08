@@ -3,14 +3,15 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { createGlobalStyle } from 'styled-components';
 
+import ClassroomRoute from './components/guards/ClassroomRoute';
 import Page_Layout from './components/shared/layout';
 import AuthContext from './contexts/auth/auth-context';
 import NotificationContext from './contexts/notification/notificationContext';
 import NotificationPopupProvider from './contexts/notification-popup/notification-popup-provider';
 import useAuth from './hooks/useAuth';
-import { getRedirect } from './libs/utils/localStorage';
 import AcceptJoinClass from './pages/accept-join-class';
 import AcceptToSentEmailResetPassword from './pages/accept-send-email';
+import AccountLocked from './pages/account-locked';
 import ClassDetail from './pages/class-detail';
 import ShowClassroomMembers from './pages/classroom-members';
 import CreateClassroom from './pages/create-classroom';
@@ -39,6 +40,9 @@ const ProtectedRoute = ({ children }) => {
   if (!user && userLoaded) {
     return <Navigate to="/sign-in" replace state={{ redirect: location }} />;
   }
+  if (user && user.isLocked) {
+    return <Navigate to="/account-locked" />;
+  }
   return children;
 };
 
@@ -50,9 +54,7 @@ ProtectedRoute.propTypes = {
 const AuthRoute = ({ children }) => {
   const { user } = useAuth();
   if (user) {
-    const redirect = getRedirect();
-    console.log(redirect);
-    return <Navigate to={redirect ? redirect : '/'} replace />;
+    return <Navigate to={'/'} replace />;
   }
   return children;
 };
@@ -63,9 +65,9 @@ AuthRoute.propTypes = {
 };
 
 const RestrictedRoute = ({ role, children }) => {
-  const { user } = useAuth();
+  const { user, userLoaded } = useAuth();
   const { openNotification } = useContext(NotificationContext);
-  if (!user || user.role !== role) {
+  if ((!user || user.role !== role) && userLoaded) {
     openNotification({
       title: 'Không có quyền truy cập',
       type: 'error',
@@ -90,6 +92,7 @@ function App() {
         const userData = response.data.data;
         setUser(userData);
         setLoaded(true);
+        console.log(userData);
       } catch (err) {
         setLoaded(true);
         console.log('Not logged in');
@@ -158,7 +161,9 @@ function App() {
             path="/classroom/:id"
             element={
               <ProtectedRoute>
-                <ClassDetail />
+                <ClassroomRoute>
+                  <ClassDetail />
+                </ClassroomRoute>
               </ProtectedRoute>
             }
           />
@@ -166,7 +171,9 @@ function App() {
             path="/classroom/:id/participants"
             element={
               <ProtectedRoute>
-                <ShowClassroomMembers />
+                <ClassroomRoute>
+                  <ShowClassroomMembers />
+                </ClassroomRoute>
               </ProtectedRoute>
             }
           />
@@ -174,7 +181,9 @@ function App() {
             path="/classroom/invite/:classroomId"
             element={
               <ProtectedRoute>
-                <AcceptJoinClass />
+                <ClassroomRoute>
+                  <AcceptJoinClass />
+                </ClassroomRoute>
               </ProtectedRoute>
             }
           />
@@ -182,7 +191,9 @@ function App() {
             path="/classroom/:id"
             element={
               <ProtectedRoute>
-                <ClassDetail />
+                <ClassroomRoute>
+                  <ClassDetail />
+                </ClassroomRoute>
               </ProtectedRoute>
             }
           />
@@ -190,7 +201,9 @@ function App() {
             path="/classroom/:id/participants"
             element={
               <ProtectedRoute>
-                <ShowClassroomMembers />
+                <ClassroomRoute>
+                  <ShowClassroomMembers />
+                </ClassroomRoute>
               </ProtectedRoute>
             }
           />
@@ -199,7 +212,9 @@ function App() {
             element={
               <ProtectedRoute>
                 <RestrictedRoute role="teacher">
-                  <GradeStructure />
+                  <ClassroomRoute>
+                    <GradeStructure />
+                  </ClassroomRoute>
                 </RestrictedRoute>
               </ProtectedRoute>
             }
@@ -209,7 +224,9 @@ function App() {
             element={
               <ProtectedRoute>
                 <RestrictedRoute role="teacher">
-                  <GradeBoard />
+                  <ClassroomRoute>
+                    <GradeBoard />
+                  </ClassroomRoute>
                 </RestrictedRoute>
               </ProtectedRoute>
             }
@@ -219,7 +236,9 @@ function App() {
             element={
               <ProtectedRoute>
                 <RestrictedRoute role="teacher">
-                  <UploadGradeFile />
+                  <ClassroomRoute>
+                    <UploadGradeFile />
+                  </ClassroomRoute>
                 </RestrictedRoute>
               </ProtectedRoute>
             }
@@ -229,7 +248,9 @@ function App() {
             element={
               <ProtectedRoute>
                 <RestrictedRoute role="teacher">
-                  <ReadFileExcelListStudents />
+                  <ClassroomRoute>
+                    <ReadFileExcelListStudents />
+                  </ClassroomRoute>
                 </RestrictedRoute>
               </ProtectedRoute>
             }
@@ -238,7 +259,9 @@ function App() {
             path="/classroom/:id/grade-review"
             element={
               <ProtectedRoute>
-                <GradeReview />
+                <ClassroomRoute>
+                  <GradeReview />
+                </ClassroomRoute>
               </ProtectedRoute>
             }
           />
@@ -249,7 +272,9 @@ function App() {
             element={
               <ProtectedRoute>
                 <RestrictedRoute role="student">
-                  <StudentViewGrade />
+                  <ClassroomRoute>
+                    <StudentViewGrade />
+                  </ClassroomRoute>
                 </RestrictedRoute>
               </ProtectedRoute>
             }
@@ -264,8 +289,24 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="/classroom/:id/grade-review/:reviewId" element={<ReviewComment />} />
-          <Route path="/notifications" element={<Notifications />} />
+          <Route
+            path="/classroom/:id/grade-review/:reviewId"
+            element={
+              <ProtectedRoute>
+                <ClassroomRoute>
+                  <ReviewComment />
+                </ClassroomRoute>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/notifications"
+            element={
+              <ProtectedRoute>
+                <Notifications />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/create-classroom"
             element={
@@ -278,6 +319,8 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          <Route path="/account-locked" element={<AccountLocked />} />
         </Route>
 
         <Route path="/verify" element={<SuccessPage />} />

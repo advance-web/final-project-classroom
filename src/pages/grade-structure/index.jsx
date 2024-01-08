@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { DndContext, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { SortableContext } from '@dnd-kit/sortable';
 import { Button, Form, Input, InputNumber, Popconfirm, Table, Typography } from 'antd';
+import { arrayMoveImmutable } from 'array-move';
 import PropTypes from 'prop-types';
 
 import SubMenu from '../../components/shared/subMenu';
@@ -8,10 +11,12 @@ import {
   createGradeStructure,
   deleteGradeStructureOfClassroom,
   getAllGradeStructuresOfClassroom,
+  sortStructureGrade,
   updateGradeStructureOfClassroom,
 } from '../../services/grade';
 
 import CreateGradeCompositionModal from './components/create-grade-composition-modal';
+import DraggableRow from './components/DraggableRow';
 
 const EditableCell = ({ editing, dataIndex, title, inputType, children, ...restProps }) => {
   const inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
@@ -199,6 +204,39 @@ export default function GradeStructure() {
     }
   };
 
+  const handleOnSortEnd = async ({ active, over }) => {
+    if (active.id === over.id) return;
+    const activeIndex = data.findIndex((i) => i._id === active.id);
+    const overIndex = data.findIndex((i) => i._id === over?.id);
+
+    const prevIndex = overIndex - 1;
+    const nextIndex = overIndex;
+    const currentId = data[activeIndex].id;
+    let reqBody = {};
+    // First: overIndex = 0
+    if (overIndex === 0) {
+      reqBody = { next: data[0].id };
+    } else if (overIndex === data.length - 1) {
+      reqBody = { prev: data[data.length - 1].id };
+    } else {
+      reqBody = { prev: data[prevIndex].id, nextIndex: data[nextIndex].id };
+    }
+    // between:
+    setData((prev) => {
+      return arrayMoveImmutable(prev, activeIndex, overIndex);
+    });
+    const response = await sortStructureGrade(currentId, reqBody);
+    console.log(response);
+    // Last: overIndex = prev.length - 1
+  };
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 1,
+      },
+    })
+  );
   return (
     <div>
       <SubMenu></SubMenu>
@@ -214,18 +252,26 @@ export default function GradeStructure() {
       </div>
       <div style={{ maxWidth: '800px', margin: 'auto', padding: '20px' }}>
         <Form form={form} component={false}>
-          <Table
-            components={{
-              body: {
-                cell: EditableCell,
-              },
-            }}
-            bordered
-            dataSource={data}
-            columns={mergedColumns}
-            rowClassName="editable-row"
-            pagination={false}
-          />
+          <DndContext sensors={sensors} onDragEnd={handleOnSortEnd}>
+            <SortableContext items={data.map((i) => i._id)}>
+              <Table
+                components={{
+                  body: {
+                    cell: EditableCell,
+                    row: DraggableRow,
+                  },
+                }}
+                bordered
+                dataSource={data.map((item) => {
+                  return { ...item, key: item._id };
+                })}
+                columns={mergedColumns}
+                rowClassName="editable-row"
+                pagination={false}
+                rowKey="key"
+              />
+            </SortableContext>
+          </DndContext>
         </Form>
       </div>
     </div>

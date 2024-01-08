@@ -11,6 +11,7 @@ const INVITE_TO_CLASSROOM_ENDPOINT = (classroomId, joinCode) => `/classroom/invi
 const GET_STUDENT_GRADE_ENDPOINT = '/students/grade/';
 const GET_STRUCTURE_GRADE_ENDPOINT = (idClass) => `/classroom/${idClass}/structureGrade`;
 const GET_ALL_STUDENT_GRADE_IN_ENDPOINT = (idClass) => `/classroom/${idClass}/studentGrade`;
+const GET_CLASSROOM_STATUS_ENDPOINT = (idClass) => `/classroom/${idClass}/status`;
 // ReviewComment
 const REVIEW_GRADE_ENDPOINT = '/gradeReview/';
 
@@ -65,4 +66,7 @@ export const getReviewDetail = (reviewId) => {
 
 export const postComment = (reviewId, data) => {
   return request.post(REVIEW_GRADE_ENDPOINT + reviewId + '/comments', data);
+};
+export const getClassroomStatus = (id) => {
+  return request.get(GET_CLASSROOM_STATUS_ENDPOINT(id));
 };

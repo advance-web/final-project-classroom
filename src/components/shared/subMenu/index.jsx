@@ -1,12 +1,11 @@
-import { useContext } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { Menu } from 'antd';
 
-import AuthContext from '../../../contexts/auth/auth-context';
+import useAuth from '../../../hooks/useAuth';
 
 function SubMenu() {
   const { id } = useParams();
-  const { user } = useContext(AuthContext);
+  const { isTeacher } = useAuth();
   const location = useLocation();
 
   const { pathname } = location;
@@ -59,32 +58,32 @@ function SubMenu() {
         <Link to={`/classroom/${id}/participants`}>Mọi người</Link>
       </Menu.Item>
 
-      {user.role == 'teacher' && (
+      {isTeacher && (
         <Menu.Item key="3">
           <Link to={`/classroom/${id}/grade-structure`}>Cấu trúc điểm</Link>
         </Menu.Item>
       )}
-      {user.role == 'teacher' && (
+      {isTeacher && (
         <Menu.Item key="4">
           <Link to={`/classroom/${id}/grade-board`}>Bảng điểm</Link>
         </Menu.Item>
       )}
-      {user.role == 'teacher' && (
+      {
         <Menu.Item key="5">
           <Link to={`/classroom/${id}/grade-review`}>Phúc khảo</Link>
         </Menu.Item>
-      )}
-      {user.role == 'student' && (
+      }
+      {!isTeacher && (
         <Menu.Item key="6">
           <Link to={`/classroom/${id}/studentGrade`}>Điểm</Link>
         </Menu.Item>
       )}
-      {user.role == 'teacher' && (
+      {isTeacher && (
         <Menu.Item key="7">
           <Link to={`/classroom/${id}/upload-grade-file`}>Upload file điểm</Link>
         </Menu.Item>
       )}
-      {user.role == 'teacher' && (
+      {isTeacher && (
         <Menu.Item key="8">
           <Link to={`/classroom/${id}/import-excel-list-student`}>Import danh sách lớp</Link>
         </Menu.Item>
