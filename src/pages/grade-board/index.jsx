@@ -114,12 +114,10 @@ function GradeBoard() {
         ),
         dataIndex: item._id,
         editable: !item?.isFinalize,
+        scale: item.scale,
       }));
-      //console.log('List gradeColumns: ', gradeColumns);
-      const dataColumns = [...defaultColumns, ...gradeColumns];
-      //console.log('List gradeColumns: ', dataColumns);
+      const dataColumns = [...defaultColumns, ...gradeColumns, averageColumn];
       setListGradeComposition(dataColumns);
-      //console.log('List columns: ', listGradeComposition);
     };
     getAllGradeStructures(idClass);
   }, [idClass]);
@@ -158,6 +156,9 @@ function GradeBoard() {
           }
         });
 
+        console.log('result item: ', resultItem);
+        resultItem['average'] = calculateAverageScore(resultItem);
+
         return resultItem;
       });
       console.log('Data transform', transformedData);
@@ -165,6 +166,24 @@ function GradeBoard() {
     };
     getAllGradeStudents(idClass);
   }, [idClass, listGradeComposition]);
+
+  const calculateAverageScore = (record) => {
+    let totalScore = 0;
+    let totalWeight = 0;
+
+    listGradeComposition?.forEach((column) => {
+      if (column.dataIndex !== 'name' && column.dataIndex !== 'idMapping') {
+        const score = parseFloat(record[column.dataIndex]) || 0;
+        const weight = parseFloat(column.scale) || 0;
+
+        totalScore += score * weight;
+        totalWeight += weight;
+      }
+    });
+    console.log('Score: ' + totalScore + ' - Weight: ' + totalWeight);
+    const averageScore = totalWeight > 0 ? totalScore / totalWeight : 0;
+    return averageScore.toFixed(2);
+  };
 
   const defaultColumns = [
     {
@@ -181,6 +200,12 @@ function GradeBoard() {
   ];
   console.log('List columns: ', listGradeComposition);
 
+  const averageColumn = {
+    title: 'Điểm TB Cộng',
+    dataIndex: 'average',
+    editable: false,
+  };
+
   const handleSave = async (row, dataIndexChange) => {
     const newData = [...dataSource];
     const index = newData.findIndex((item) => row.key === item.key);
@@ -190,6 +215,7 @@ function GradeBoard() {
       ...row,
     });
     console.log('Row', row);
+    console.log('Item: ', item);
 
     if (dataIndexChange == 'idMapping') {
       const updatedIdMapping = {
@@ -201,7 +227,7 @@ function GradeBoard() {
 
       const updatedIdMappingRes = await createAndUpdateIdMappingByTeacher(idUser, updatedIdMapping);
       console.log('Mapping respond: ', updatedIdMappingRes);
-      if (updatedIdMappingRes.data.status == 'success') {
+      if (updatedIdMappingRes.data.status === 'success') {
         setDataSource(newData);
       }
     } else {
@@ -214,7 +240,13 @@ function GradeBoard() {
       const updatedGradeRes = await createAndUpdateGrade(dataUpdatedGrade);
       console.log('Data response: ', updatedGradeRes);
       if (updatedGradeRes.data.status == 'success') {
-        setDataSource(newData);
+        const updatedDataSource = newData.map((item) => {
+          if (item.key === row.key) {
+            item['average'] = calculateAverageScore(item);
+          }
+          return item;
+        });
+        setDataSource(updatedDataSource);
       }
     }
   };
