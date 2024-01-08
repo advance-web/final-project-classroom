@@ -68,11 +68,11 @@ function SubMenu() {
           <Link to={`/classroom/${id}/grade-board`}>Bảng điểm</Link>
         </Menu.Item>
       )}
-      {isTeacher && (
+      {
         <Menu.Item key="5">
           <Link to={`/classroom/${id}/grade-review`}>Phúc khảo</Link>
         </Menu.Item>
-      )}
+      }
       {!isTeacher && (
         <Menu.Item key="6">
           <Link to={`/classroom/${id}/studentGrade`}>Điểm</Link>

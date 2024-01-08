@@ -123,13 +123,13 @@ const HeaderLogin = () => {
           </Menu.Item>
           <Menu.Item key="3" onClick={(e) => e.preventDefault()}>
             <Button
-              onClick={() => {
-                logOut();
-                localStorage.removeItem('jwt');
+              onClick={async () => {
                 setUser(null);
+                await logOut();
+                localStorage.removeItem('jwt');
               }}
             >
-              <a href="/">Đăng xuất</a>
+              <a>Đăng xuất</a>
             </Button>
           </Menu.Item>
         </Menu>

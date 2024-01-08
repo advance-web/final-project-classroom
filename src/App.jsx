@@ -8,7 +8,6 @@ import AuthContext from './contexts/auth/auth-context';
 import NotificationContext from './contexts/notification/notificationContext';
 import NotificationPopupProvider from './contexts/notification-popup/notification-popup-provider';
 import useAuth from './hooks/useAuth';
-import { getRedirect } from './libs/utils/localStorage';
 import AcceptJoinClass from './pages/accept-join-class';
 import AcceptToSentEmailResetPassword from './pages/accept-send-email';
 import ClassDetail from './pages/class-detail';
@@ -50,9 +49,7 @@ ProtectedRoute.propTypes = {
 const AuthRoute = ({ children }) => {
   const { user } = useAuth();
   if (user) {
-    const redirect = getRedirect();
-    console.log(redirect);
-    return <Navigate to={redirect ? redirect : '/'} replace />;
+    return <Navigate to={'/'} replace />;
   }
   return children;
 };
@@ -63,9 +60,9 @@ AuthRoute.propTypes = {
 };
 
 const RestrictedRoute = ({ role, children }) => {
-  const { user } = useAuth();
+  const { user, userLoaded } = useAuth();
   const { openNotification } = useContext(NotificationContext);
-  if (!user || user.role !== role) {
+  if ((!user || user.role !== role) && userLoaded) {
     openNotification({
       title: 'Không có quyền truy cập',
       type: 'error',

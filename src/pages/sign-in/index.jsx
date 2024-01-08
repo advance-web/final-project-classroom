@@ -39,7 +39,7 @@ export default function SignIn() {
 
       const token = dataUser.token;
       console.log(dataUser);
-      const { id, email, name, phone, address, verify } = dataUser.data.user;
+      const { id, email, name, phone, address, verify, role } = dataUser.data.user;
       const userSignin = {
         id,
         email,
@@ -47,6 +47,7 @@ export default function SignIn() {
         phone,
         address,
         verify,
+        role,
       };
 
       if (dataUser.status == 'success') {

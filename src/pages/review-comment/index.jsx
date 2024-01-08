@@ -1,16 +1,16 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Button, Card, Flex, Form, Input } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 
-import AuthContext from '../../contexts/auth/auth-context';
+import useAuth from '../../hooks/useAuth';
 import { getDetailClassroomById } from '../../services/classroom';
 import { getReviewDetail, getStudentGrade, postComment, updateGradeReviewStatus } from '../../services/grade';
 import { notifyAnotherUserInClassroom } from '../../services/notification';
 
 function ReviewComment() {
   const [reviewDetail, setReviewDetail] = useState();
-  const { user } = useContext(AuthContext);
+  const { user, isTeacher } = useAuth();
   const [studentGrade, setStudentGrade] = useState();
 
   const location = useLocation();
@@ -193,7 +193,7 @@ function ReviewComment() {
   let statusMessages;
   switch (reviewDetail?.status) {
     case 'INREVIEW':
-      statusMessages = (
+      statusMessages = isTeacher ? (
         <Flex wrap="wrap" gap="small">
           <Form
             name="form1"
@@ -223,6 +223,10 @@ function ReviewComment() {
             Từ chối
           </Button>
         </Flex>
+      ) : (
+        <p>
+          <strong>Tình trạng</strong>: Đang được xem xét
+        </p>
       );
       break;
     case 'ACCEPTED':
@@ -254,13 +258,6 @@ function ReviewComment() {
               <>
                 <p>Cột điểm: {grade.structureGrade.name}</p>
                 <p>Điểm: {grade.grade}</p>
-              </>
-            );
-          } else {
-            return (
-              <>
-                <p>Cột điểm: </p>
-                <p>Điểm: </p>
               </>
             );
           }
