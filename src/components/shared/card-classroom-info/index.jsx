@@ -6,10 +6,14 @@ export default function CardClassroomInfo(props) {
   return (
     <div>
       <Card
-        title={<span style={{ fontSize: '18px' }}>{data?.name}</span>}
-        bordered={false}
+        title={
+          <span style={{ fontSize: '18px' }}>
+            {data?.name} {!data?.active && '(Đã bị khóa)'}{' '}
+          </span>
+        }
         style={{
           width: 300,
+          ...(!data?.active && { borderColor: 'red' }),
         }}
       >
         <Typography.Paragraph>{data?.subject}</Typography.Paragraph>

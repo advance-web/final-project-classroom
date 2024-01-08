@@ -39,19 +39,9 @@ export default function SignIn() {
 
       const token = dataUser.token;
       console.log(dataUser);
-      const { id, email, name, phone, address, verify, role } = dataUser.data.user;
-      const userSignin = {
-        id,
-        email,
-        name,
-        phone,
-        address,
-        verify,
-        role,
-      };
 
       if (dataUser.status == 'success') {
-        setUser(userSignin);
+        setUser(dataUser.data.user);
         setJwt(token);
         if (locationState.redirect) {
           navigate(locationState.redirect);

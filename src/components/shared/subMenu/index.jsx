@@ -78,12 +78,12 @@ function SubMenu() {
           <Link to={`/classroom/${id}/studentGrade`}>Điểm</Link>
         </Menu.Item>
       )}
-      {user.role == 'teacher' && (
+      {isTeacher && (
         <Menu.Item key="7">
           <Link to={`/classroom/${id}/upload-grade-file`}>Upload file điểm</Link>
         </Menu.Item>
       )}
-      {user.role == 'teacher' && (
+      {isTeacher && (
         <Menu.Item key="8">
           <Link to={`/classroom/${id}/import-excel-list-student`}>Import danh sách lớp</Link>
         </Menu.Item>
