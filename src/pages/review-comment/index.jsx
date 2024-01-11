@@ -103,7 +103,7 @@ function ReviewComment() {
         if (reviewDetail.student == dataUser.user) {
           to = dataClassroomDetail.teacher._id;
         } else {
-          to = dataUser.user;
+          to = reviewDetail.student;
         }
         const data = {
           to: to,
