@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Button, Form, Input, Modal, Table } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 
 import SubMenu from '../../components/shared/subMenu';
+import NotificationContext from '../../contexts/notification/notificationContext';
 import { getDetailClassroomById } from '../../services/classroom';
 import { getStudentGrade, postGradeReview } from '../../services/grade';
 import { notifyAnotherUserInClassroom } from '../../services/notification';
@@ -12,26 +13,22 @@ function StudentViewGrade() {
   const [studentGrade, setStudentGrade] = useState();
   const [modaldata, setmodaldata] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { openNotification } = useContext(NotificationContext);
 
   const location = useLocation();
-  console.log('Location: ', location);
 
   const idClass = location.pathname.split('/')[2];
-  console.log('ID Class: ', idClass);
 
   useEffect(() => {
     const studentGrade = async (id) => {
       const dataRespond = await getStudentGrade(id);
-      console.log('Student grade Data respond', dataRespond);
       setStudentGrade(dataRespond.data.data);
     };
 
     studentGrade(idClass);
   }, [idClass]);
 
-  console.log('Student Grade: ', studentGrade);
   const showModal = (record) => {
-    console.log('Record: ', record);
     setmodaldata(record);
     setIsModalOpen(true);
   };
@@ -52,7 +49,6 @@ function StudentViewGrade() {
   const handleSubmit = async () => {
     try {
       const data = form.getFieldValue();
-      console.log('Form data: ', data);
       const dataCallAPI = {
         studentGrade: data.studentGrade,
         expectationGrade: data.expectationGrade,
@@ -63,25 +59,20 @@ function StudentViewGrade() {
       //setLoading(true)
       const dataReturn = await postGradeReview(dataCallAPI);
       //setLoading(false)
-      console.log('API Response: ', dataReturn);
-
       const dataUser = dataReturn.data.data;
       const status = dataReturn.data.status;
 
-      console.log('Status: ', status);
-      console.log('ReviewForm Resonse: ', dataUser);
-
       if (status == 'success') {
-        console.log('Gửi đơn phúc khảo thành công');
+        openNotification({
+          type: 'success',
+          title: 'Tạo phúc khảo',
+          description: 'Gửi đơn phúc khảo thành công',
+        });
+        setIsModalOpen(false);
 
         // Call API to get detail classroom to take the teacher ID
         const dataClassDetailResponse = await getDetailClassroomById(idClass);
-        console.log('dataClassDetail Response: ', dataClassDetailResponse);
         const dataClassroomDetail = dataClassDetailResponse.data.data;
-        const status = dataClassDetailResponse.data.status;
-
-        console.log('Status: ', status);
-        console.log('Classroom Detail Response: ', dataClassroomDetail);
 
         // Call API to post Notify another user in classroom
         const sendDataNotify = {
@@ -94,8 +85,11 @@ function StudentViewGrade() {
       }
       // form.submit();
     } catch (error) {
-      console.log('Cập nhật không thành công');
-      //setLoading(false)
+      openNotification({
+        type: 'error',
+        title: 'Tạo phúc khảo',
+        description: 'Gửi đơn phúc khảo thất bại',
+      });
     }
   };
 

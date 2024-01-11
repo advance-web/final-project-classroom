@@ -1,10 +1,11 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Button, Form, Input, Table } from 'antd';
 import PropTypes from 'prop-types';
 
 import ExcelExportButton from '../../components/shared/exportToExcel';
 import SubMenu from '../../components/shared/subMenu';
+import NotificationContext from '../../contexts/notification/notificationContext';
 import {
   createAndUpdateGrade,
   finalizeStructureGrade,
@@ -26,7 +27,7 @@ const EditableRow = ({ index, ...props }) => {
     </Form>
   );
 };
-const EditableCell = ({ title, editable, children, dataIndex, record, handleSave, ...restProps }) => {
+const EditableCell = ({ editable, children, dataIndex, record, handleSave, ...restProps }) => {
   const [editing, setEditing] = useState(false);
   const inputRef = useRef(null);
   const form = useContext(EditableContext);
@@ -67,11 +68,19 @@ const EditableCell = ({ title, editable, children, dataIndex, record, handleSave
         rules={[
           {
             required: true,
-            message: `${title} is required.`,
+            message: `Vui lòng nhập điểm`,
+          },
+          {
+            max: 10,
+            message: 'Tối đa 10 điểm',
+          },
+          {
+            min: 0,
+            message: 'Tối thiểu 0 điểm',
           },
         ]}
       >
-        <Input ref={inputRef} onPressEnter={save} onBlur={save} />
+        <Input type="number" ref={inputRef} onPressEnter={save} onBlur={save} />
       </Form.Item>
     ) : (
       <div
@@ -88,36 +97,57 @@ const EditableCell = ({ title, editable, children, dataIndex, record, handleSave
   return <td {...restProps}>{childNode}</td>;
 };
 
+const averageColumn = {
+  title: 'Điểm TB Cộng',
+  dataIndex: 'average',
+  editable: false,
+};
+
+const defaultColumns = [
+  {
+    title: 'Họ tên',
+    dataIndex: 'name',
+    width: '20%',
+  },
+  {
+    title: 'Mã số sinh viên',
+    dataIndex: 'idMapping',
+    width: '15%',
+  },
+];
+
 function GradeBoard() {
-  const [listGradeComposition, setListGradeComposition] = useState();
   const [dataSource, setDataSource] = useState();
+  const [allGradeStructure, setAllGradeStructure] = useState();
   const location = useLocation();
 
   const idClass = location.pathname.split('/')[2];
-  console.log('ID Class: ', idClass);
+  const { openNotification } = useContext(NotificationContext);
+
+  const listGradeComposition = useMemo(() => {
+    const gradeColumns = allGradeStructure?.map((item) => ({
+      title: () => (
+        <>
+          {item.name} ({item.scale}){' '}
+          <Button type="primary" danger onClick={() => handleFinalize(item?.id, !item.isFinalize)}>
+            {!item?.isFinalize ? 'Finalize' : 'Undo'}
+          </Button>
+        </>
+      ),
+      dataIndex: item._id,
+      editable: !item.isFinalize,
+      scale: item.scale,
+    }));
+    return gradeColumns && [...defaultColumns, ...gradeColumns, averageColumn];
+  }, [allGradeStructure]);
+
+  console.log(listGradeComposition);
 
   useEffect(() => {
     const getAllGradeStructures = async (idClass) => {
       const dataRespond = await getAllGradeStructuresOfClassroom(idClass);
       const gradeDataRespond = dataRespond.data.data;
-      console.log('Data respond: ', gradeDataRespond);
-      const gradeColumns = gradeDataRespond?.map((item) => ({
-        // title: item.name + ' (' + item.scale + ')',
-        title: () => (
-          <>
-            {item.name} ({item.scale}){' '}
-            <Button type="primary" danger onClick={() => handleFinalize(item?.id)} disabled={item?.isFinalize}>
-              {/* <a href="">Finalize</a> */}
-              Finalize
-            </Button>
-          </>
-        ),
-        dataIndex: item._id,
-        editable: !item?.isFinalize,
-        scale: item.scale,
-      }));
-      const dataColumns = [...defaultColumns, ...gradeColumns, averageColumn];
-      setListGradeComposition(dataColumns);
+      setAllGradeStructure(gradeDataRespond);
     };
     getAllGradeStructures(idClass);
   }, [idClass]);
@@ -185,27 +215,6 @@ function GradeBoard() {
     return averageScore.toFixed(2);
   };
 
-  const defaultColumns = [
-    {
-      title: 'Họ tên',
-      dataIndex: 'name',
-      width: '20%',
-    },
-    {
-      title: 'Mã số sinh viên',
-      dataIndex: 'idMapping',
-      width: '15%',
-      editable: true,
-    },
-  ];
-  console.log('List columns: ', listGradeComposition);
-
-  const averageColumn = {
-    title: 'Điểm TB Cộng',
-    dataIndex: 'average',
-    editable: false,
-  };
-
   const handleSave = async (row, dataIndexChange) => {
     const newData = [...dataSource];
     const index = newData.findIndex((item) => row.key === item.key);
@@ -251,10 +260,10 @@ function GradeBoard() {
     }
   };
 
-  const handleFinalize = async (gradeStructureId) => {
+  const handleFinalize = async (gradeStructureId, isFinalize) => {
     try {
       const isFinalizeData = {
-        isFinalize: true,
+        isFinalize: isFinalize,
       };
       const responseFinalizeStructureGrade = await finalizeStructureGrade(gradeStructureId, isFinalizeData);
       console.log(responseFinalizeStructureGrade);
@@ -269,17 +278,28 @@ function GradeBoard() {
         console.log('Response sau khi call API notify:', result);
 
         // set lại state
-        setListGradeComposition((prev) => {
+        setAllGradeStructure((prev) => {
           return prev.map((item) => {
-            if (item?.dataIndex === responseFinalizeStructureGrade?.data?.data?.id) {
-              return { ...item, editable: false };
+            if (item._id === responseFinalizeStructureGrade?.data?.data?.id) {
+              return { ...item, isFinalize: isFinalize };
             }
             return item;
           });
         });
+
+        openNotification({
+          type: 'success',
+          title: 'Chốt cột điểm',
+          description: isFinalize ? 'Chốt cột điểm thành công' : 'Hoàn trả cột điểm thành công',
+        });
       }
     } catch (error) {
       console.log('Lỗi: ', error);
+      openNotification({
+        type: 'error',
+        title: 'Chốt cột điểm',
+        description: isFinalize ? 'Chốt cột điểm thất bại' : 'Hoàn trả cột điểm thất bại',
+      });
     }
   };
 

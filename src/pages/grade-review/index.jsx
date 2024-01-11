@@ -5,6 +5,8 @@ import { Table } from 'antd';
 import SubMenu from '../../components/shared/subMenu';
 import { getAllGradeReviewsOfClassroom } from '../../services/grade';
 
+import Status from './components/Status';
+
 const columns = [
   {
     title: 'Sinh viên phúc khảo',
@@ -27,6 +29,11 @@ const columns = [
     title: 'Lý do',
     dataIndex: 'reason',
     width: '30%',
+  },
+  {
+    title: 'Tình trạng',
+    dataIndex: 'status',
+    render: (_, record) => <Status status={record.status} />,
   },
   {
     title: 'Chi tiết phúc khảo',
@@ -57,6 +64,7 @@ export default function GradeReview() {
         currentGrade: review.currentGrade,
         expectationGrade: review.expectationGrade,
         reason: review.reason,
+        status: review.status,
       }));
       console.log('dataGradeReview: ', dataGradeReview);
       setListReviews(dataGradeReview);
