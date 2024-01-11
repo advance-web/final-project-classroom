@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Button, Form, Input, Modal, Table } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
+import Typography from 'antd/es/typography/Typography';
 
 import SubMenu from '../../components/shared/subMenu';
 import NotificationContext from '../../contexts/notification/notificationContext';
@@ -22,6 +23,7 @@ function StudentViewGrade() {
   useEffect(() => {
     const studentGrade = async (id) => {
       const dataRespond = await getStudentGrade(id);
+
       setStudentGrade(dataRespond.data.data);
     };
 
@@ -29,6 +31,7 @@ function StudentViewGrade() {
   }, [idClass]);
 
   const showModal = (record) => {
+    console.log(record);
     setmodaldata(record);
     setIsModalOpen(true);
   };
@@ -104,7 +107,7 @@ function StudentViewGrade() {
       dataIndex: 'scorePart',
     },
     {
-      title: '% điểm',
+      title: 'Hệ số điểm',
       key: 'percentScore',
       dataIndex: 'percentScore',
     },
@@ -114,10 +117,11 @@ function StudentViewGrade() {
       dataIndex: 'score',
     },
     {
-      title: '',
-      dataIndex: '',
+      title: 'Phúc khảo',
+      dataIndex: 'action',
       key: 'x',
-      render: (record) => {
+      render: (_, record) => {
+        console.log(record);
         return (
           <>
             <Button onClick={() => showModal(record)}>Phúc khảo</Button>
@@ -131,23 +135,23 @@ function StudentViewGrade() {
     studentGrade?.grades.map((grade) => {
       return {
         scoreId: grade._id,
-        scorePart: grade.structureGrade.name,
-        percentScore: grade.structureGrade.scale,
+        scorePart: grade.structureGrade?.name,
+        percentScore: grade.structureGrade?.scale,
         score: grade.grade,
       };
     }) ?? [];
-  const data = [
-    ...row,
-    {
-      scorePart: 'Tổng điểm',
-      score: studentGrade?.total,
-    },
-  ];
+  const data = [...row];
 
   return (
     <>
       <SubMenu />
-      <Table bordered pagination={false} columns={columns} dataSource={data} />
+      <Table
+        bordered
+        pagination={false}
+        columns={columns}
+        dataSource={data}
+        footer={() => <Typography.Text>Tổng điểm: {studentGrade?.total}</Typography.Text>}
+      />
       <Modal title="Đơn phúc khảo" open={isModalOpen} onOk={handleOk} onCancel={handleCancel} footer={null}>
         <Form
           form={form}

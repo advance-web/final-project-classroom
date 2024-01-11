@@ -191,13 +191,12 @@ export default function GradeStructure() {
         name: gradeCompositionName,
         scale: scale,
       };
-      console.log('Create grade composition: ', dataCallAPI);
       const dataRespond = await createGradeStructure(idClass, dataCallAPI);
-      console.log(dataRespond);
 
       if (dataRespond.data.status === 'success') {
         const resetData = await getAllGradeStructuresOfClassroom(idClass);
         setData(resetData.data.data);
+        setCreateGradeComposition(false);
       }
     } catch (err) {
       console.log(err);
@@ -225,9 +224,7 @@ export default function GradeStructure() {
     setData((prev) => {
       return arrayMoveImmutable(prev, activeIndex, overIndex);
     });
-    const response = await sortStructureGrade(currentId, reqBody);
-    console.log(response);
-    // Last: overIndex = prev.length - 1
+    await sortStructureGrade(currentId, reqBody);
   };
 
   const sensors = useSensors(
@@ -250,30 +247,34 @@ export default function GradeStructure() {
           onInputScaleChange={(value) => setScale(value)}
         />
       </div>
-      <div style={{ maxWidth: '800px', margin: 'auto', padding: '20px' }}>
-        <Form form={form} component={false}>
-          <DndContext sensors={sensors} onDragEnd={handleOnSortEnd}>
-            <SortableContext items={data.map((i) => i._id)}>
-              <Table
-                components={{
-                  body: {
-                    cell: EditableCell,
-                    row: DraggableRow,
-                  },
-                }}
-                bordered
-                dataSource={data.map((item) => {
-                  return { ...item, key: item._id };
-                })}
-                columns={mergedColumns}
-                rowClassName="editable-row"
-                pagination={false}
-                rowKey="key"
-              />
-            </SortableContext>
-          </DndContext>
-        </Form>
-      </div>
+      {data.length ? (
+        <div style={{ maxWidth: '800px', margin: 'auto', padding: '20px' }}>
+          <Form form={form} component={false}>
+            <DndContext sensors={sensors} onDragEnd={handleOnSortEnd}>
+              <SortableContext items={data.map((i) => i._id)}>
+                <Table
+                  components={{
+                    body: {
+                      cell: EditableCell,
+                      row: DraggableRow,
+                    },
+                  }}
+                  bordered
+                  dataSource={data.map((item) => {
+                    return { ...item, key: item._id };
+                  })}
+                  columns={mergedColumns}
+                  rowClassName="editable-row"
+                  pagination={false}
+                  rowKey="key"
+                />
+              </SortableContext>
+            </DndContext>
+          </Form>
+        </div>
+      ) : (
+        <Typography.Title>Hãy tạo cột điểm mới</Typography.Title>
+      )}
     </div>
   );
 }

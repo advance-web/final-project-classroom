@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { Button, Card, Flex, Form, Input } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 
+import SubMenu from '../../components/shared/subMenu';
 import useAuth from '../../hooks/useAuth';
 import { getDetailClassroomById } from '../../services/classroom';
 import { getReviewDetail, getStudentGrade, postComment, updateGradeReviewStatus } from '../../services/grade';
@@ -249,6 +250,7 @@ function ReviewComment() {
 
   return (
     <>
+      <SubMenu />
       <Card>
         <h1>Chi tiết phúc khảo</h1>
         <p>Họ tên: {user?.name}</p>
