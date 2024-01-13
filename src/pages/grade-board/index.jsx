@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Button, Form, Input, Table } from 'antd';
+import { isString } from 'antd/es/button';
 import PropTypes from 'prop-types';
 
 import ExcelExportButton from '../../components/shared/exportToExcel';
@@ -113,6 +114,7 @@ const defaultColumns = [
     title: 'Mã số sinh viên',
     dataIndex: 'idMapping',
     width: '15%',
+    editable: true,
   },
 ];
 
@@ -328,7 +330,11 @@ function GradeBoard() {
   const gradeBoardExportExcel = dataSource?.map((item) => {
     const newItem = {};
     columns?.forEach((column) => {
-      newItem[column.title] = item[column.dataIndex];
+      if (!isString(column.title)) {
+        const [gradeStructure] = allGradeStructure.filter((grade) => grade._id === column.dataIndex);
+        console.log(gradeStructure);
+        newItem[gradeStructure.name] = item[column.dataIndex];
+      } else newItem[column.title] = item[column.dataIndex];
     });
     return newItem;
   });
@@ -340,7 +346,13 @@ function GradeBoard() {
       if (column.dataIndex == 'name') {
         newItem[column.title] = item[column.dataIndex];
       } else {
-        newItem[column.title] = '';
+        let columnName = '';
+        if (!isString(column.title)) {
+          const [gradeStructure] = allGradeStructure.filter((grade) => grade._id === column.dataIndex);
+          columnName = gradeStructure.name;
+          console.log(columnName);
+        } else columnName = column.title;
+        newItem[columnName] = '';
       }
     });
     return newItem;

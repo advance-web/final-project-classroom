@@ -19,7 +19,7 @@ import CreateGradeCompositionModal from './components/create-grade-composition-m
 import DraggableRow from './components/DraggableRow';
 
 const EditableCell = ({ editing, dataIndex, title, inputType, children, ...restProps }) => {
-  const inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
+  const inputNode = inputType === 'number' ? <InputNumber min={1} /> : <Input />;
   return (
     <td {...restProps}>
       {editing ? (

@@ -150,9 +150,9 @@ function App() {
           <Route
             path="/accept-send-email"
             element={
-              <ProtectedRoute>
+              <AuthRoute>
                 <AcceptToSentEmailResetPassword />
-              </ProtectedRoute>
+              </AuthRoute>
             }
           />
 
