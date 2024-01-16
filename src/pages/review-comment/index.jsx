@@ -6,13 +6,17 @@ import TextArea from 'antd/es/input/TextArea';
 import SubMenu from '../../components/shared/subMenu';
 import useAuth from '../../hooks/useAuth';
 import { getDetailClassroomById } from '../../services/classroom';
-import { getReviewDetail, getStudentGrade, postComment, updateGradeReviewStatus } from '../../services/grade';
+import {
+  getAllGradeReviewsOfClassroom,
+  getReviewDetail,
+  postComment,
+  updateGradeReviewStatus,
+} from '../../services/grade';
 import { notifyAnotherUserInClassroom } from '../../services/notification';
 
 function ReviewComment() {
   const [reviewDetail, setReviewDetail] = useState();
   const { user, isTeacher } = useAuth();
-  const [studentGrade, setStudentGrade] = useState();
 
   const location = useLocation();
   console.log('Location: ', location);
@@ -28,20 +32,29 @@ function ReviewComment() {
 
   useEffect(() => {
     const reviewDetail = async (id) => {
-      const dataRespond = await getReviewDetail(id);
-      console.log('Data respond', dataRespond);
-      setReviewDetail(dataRespond.data.data);
+      const dataGetReviewDetailRespond = await getReviewDetail(id);
+      const reviewDetail = dataGetReviewDetailRespond.data.data;
+      console.log('reviewDetail', reviewDetail);
+      // setReviewDetail(dataRespond.data.data);
+
+      const dataGetAllGradeReviewInClassroomRespond = await getAllGradeReviewsOfClassroom(idClass);
+      const allGradeReviewInClassroom = dataGetAllGradeReviewInClassroomRespond.data.data;
+      console.log('allGradeReviewInClassroom', allGradeReviewInClassroom);
+
+      const reviewInfo = allGradeReviewInClassroom?.find((gradeReview) => {
+        return gradeReview._id == reviewDetail._id;
+      });
+      console.log('review needed: ', reviewInfo);
+
+      setReviewDetail({
+        ...reviewDetail,
+        structureGrade: reviewInfo?.structureGrade,
+        studentInfo: reviewInfo?.studentInfo,
+        currentGrade: reviewInfo?.currentGrade,
+      });
     };
 
     reviewDetail(reviewId);
-
-    const studentGrade = async (id) => {
-      const dataRespond = await getStudentGrade(id);
-      console.log('Student grade Data respond', dataRespond);
-      setStudentGrade(dataRespond.data.data);
-    };
-
-    studentGrade(idClass);
   }, [reviewId]);
 
   const onFinish = (values) => {
@@ -253,17 +266,9 @@ function ReviewComment() {
       <SubMenu />
       <Card>
         <h1>Chi tiết phúc khảo</h1>
-        <p>Họ tên: {user?.name}</p>
-        {studentGrade?.grades.map((grade) => {
-          if (grade.id === reviewDetail?.studentGrade) {
-            return (
-              <>
-                <p>Cột điểm: {grade.structureGrade.name}</p>
-                <p>Điểm: {grade.grade}</p>
-              </>
-            );
-          }
-        })}
+        <p>Họ tên: {reviewDetail?.studentInfo?.name}</p>
+        <p>Cột điểm: {reviewDetail?.structureGrade?.name}</p>
+        <p>Điểm: {reviewDetail?.currentGrade}</p>
         <p>Điểm mong muốn: {reviewDetail?.expectationGrade}</p>
         <p>Lí do: {reviewDetail?.reason}</p>
         <p>Điểm cuối cùng: {reviewDetail?.finalGrade}</p>
