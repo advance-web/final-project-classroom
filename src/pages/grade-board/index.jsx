@@ -229,17 +229,25 @@ function GradeBoard() {
     console.log('Item: ', item);
 
     if (dataIndexChange == 'idMapping') {
-      const updatedIdMapping = {
-        id: row[dataIndexChange],
-      };
+      try {
+        const updatedIdMapping = {
+          id: row[dataIndexChange],
+        };
 
-      const idUser = row.key;
-      console.log(updatedIdMapping);
+        const idUser = row.key;
+        console.log(updatedIdMapping);
 
-      const updatedIdMappingRes = await createAndUpdateIdMappingByTeacher(idUser, updatedIdMapping);
-      console.log('Mapping respond: ', updatedIdMappingRes);
-      if (updatedIdMappingRes.data.status === 'success') {
-        setDataSource(newData);
+        const updatedIdMappingRes = await createAndUpdateIdMappingByTeacher(idUser, updatedIdMapping);
+        console.log('Mapping respond: ', updatedIdMappingRes);
+        if (updatedIdMappingRes.data.status === 'success') {
+          setDataSource(newData);
+        }
+      } catch (err) {
+        openNotification({
+          type: 'error',
+          title: 'Cập nhật mã số sinh viên',
+          description: 'Mã số sinh viên đã tồn tại',
+        });
       }
     } else {
       const dataUpdatedGrade = {

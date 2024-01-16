@@ -14,6 +14,10 @@ const columns = [
     width: '20%',
   },
   {
+    title: 'Mã số sinh viên',
+    dataIndex: 'idMapping',
+  },
+  {
     title: 'Cột điểm phúc khảo',
     dataIndex: 'structureGrade',
   },
@@ -65,6 +69,7 @@ export default function GradeReview() {
         expectationGrade: review.expectationGrade,
         reason: review.reason,
         status: review.status,
+        idMapping: review.studentInfo.idMapping ? review.studentInfo.idMapping : '',
       }));
       console.log('dataGradeReview: ', dataGradeReview);
       setListReviews(dataGradeReview);

@@ -267,6 +267,7 @@ function ReviewComment() {
       <Card>
         <h1>Chi tiết phúc khảo</h1>
         <p>Họ tên: {reviewDetail?.studentInfo?.name}</p>
+        {reviewDetail?.studentInfo && <p>Mã số sinh viên: {reviewDetail?.studentInfo?.idMapping}</p>}
         <p>Cột điểm: {reviewDetail?.structureGrade?.name}</p>
         <p>Điểm: {reviewDetail?.currentGrade}</p>
         <p>Điểm mong muốn: {reviewDetail?.expectationGrade}</p>

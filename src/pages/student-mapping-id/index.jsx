@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Button, Form, Input, Modal, Typography } from 'antd';
 
 import SubmitButton from '../../components/ui/SubmitButton';
+import NotificationContext from '../../contexts/notification/notificationContext';
+import useAuth from '../../hooks/useAuth';
 import { createAndUpdateIdMapping } from '../../services/student';
 
 import '../../css/signupStyle.css';
@@ -10,7 +12,10 @@ export default function CreateClassroom() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [successModalVisible, setSuccessModalVisible] = useState(false);
+  const { user } = useAuth();
   //const [successClassroom, setSuccessClassroom] = useState(null);
+  console.log(user?.idMapping);
+  const { openNotification } = useContext(NotificationContext);
 
   //const navigate = useNavigate();
 
@@ -35,7 +40,7 @@ export default function CreateClassroom() {
     try {
       const { studentID } = form.getFieldValue();
       const dataCallAPI = {
-        idMapping: studentID,
+        id: studentID,
       };
       console.log('Data call API: ', dataCallAPI);
 
@@ -52,6 +57,11 @@ export default function CreateClassroom() {
       form.submit();
     } catch (error) {
       setLoading(false);
+      openNotification({
+        type: 'error',
+        title: 'Cập nhật mã số sinh viên',
+        description: 'Mã số sinh viên đã tồn tại',
+      });
     }
   };
 
@@ -67,7 +77,7 @@ export default function CreateClassroom() {
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
         style={{ maxWidth: 600 }}
-        initialValues={{ remember: true }}
+        initialValues={{ studentID: user ? user.idMapping : '' }}
         onFinish={onFinish}
       >
         <Form.Item
@@ -104,7 +114,7 @@ export default function CreateClassroom() {
 
       <Modal
         title="Thông báo: Mapping student ID"
-        visible={successModalVisible}
+        open={successModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
         footer={[
